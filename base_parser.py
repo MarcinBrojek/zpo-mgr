@@ -30,7 +30,7 @@ class BaseParser:
         # print(self.rs_all)
         for rs in self.rs_all:
             if rs.id not in known_ntm:
-                grammar_txt += f"{rs.id}" + r": /@" + f"{rs.id}" + r"(\_\w+)?/" + "\n"
+                grammar_txt += f"{rs.id}" + r": var" + "\n" # here can be rs.is != var
                 known_ntm.append(rs.id)
 
             rule_txt = ""
@@ -46,7 +46,7 @@ class BaseParser:
 
         tranformer_txt = self.base_tranformer_txt
         for ntm in known_ntm:
-            tranformer_txt += f"\n    def {ntm}(self, c):\n        return c\n"
+            tranformer_txt += f"\n    def {ntm}(self, c):\n        return [el if not isinstance(el, Token) else el.value for el in c]\n"
 
         with open("tmp_transformer.py", "w") as tmp_transformer_import:
             tmp_transformer_import.write(tranformer_txt)

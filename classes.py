@@ -8,26 +8,38 @@ def translate_lst(base_parser, start, lst):
     return [translate_c(base_parser, start, c) for c in lst]
 
 
-class State:
-    def __init__(self, id):
+class Var:
+    def __init__(self, ntm, id):
+        self.ntm = ntm
         self.id = id or ""
 
     def __str__(self):
-        return f"@s{self.id}"
-
+        return f"@{self.ntm}_{self.id}"
+    
     def __repr__(self):
         return self.__str__()
 
 
-class Gamma:
-    def __init__(self, id):
-        self.id = id or ""
+# class State:
+#     def __init__(self, id):
+#         self.id = id or ""
 
-    def __str__(self):
-        return f"@G{self.id}"
+#     def __str__(self):
+#         return f"@s{self.id}"
 
-    def __repr__(self):
-        return self.__str__()
+#     def __repr__(self):
+#         return self.__str__()
+
+
+# class Gamma:
+#     def __init__(self, id):
+#         self.id = id or ""
+
+#     def __str__(self):
+#         return f"@G{self.id}"
+
+#     def __repr__(self):
+#         return self.__str__()
 
 
 # class MyType:

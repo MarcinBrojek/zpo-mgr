@@ -1,11 +1,6 @@
 from base_parser import BaseParser
 from classes import (
-    State,
-    Gamma,
-    ApplyPred,
     DefinePred,
-    Transition,
-    Typing,
     Block,
     Rs,
     Ro,

@@ -1,7 +1,8 @@
 from lark import Transformer
 from classes import (
-    State,
-    Gamma,
+    Var,
+    # State,
+    # Gamma,
     ApplyPred,
     DefinePred,
     Transition,
@@ -32,11 +33,11 @@ class OptimusPirme(Transformer):
 
     def s(self, c):
         id = None if "_" not in str(c[0]) else str(c[0][2:])
-        return State(id)
+        return Var('s', id)
 
     def g(self, c):
         id = None if "_" not in str(c[0]) else str(c[0][2:])
-        return Gamma(id)
+        return Var('G', id)
 
     # def t(self, c):
     #     print(c)
