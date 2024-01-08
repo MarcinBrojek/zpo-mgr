@@ -1,0 +1,11 @@
+%import common.WS
+%import common.ESCAPED_STRING
+%ignore WS
+
+PY  : /`[^`]*`/
+ID  : /[a-zA-Z][\w\_]*/
+STR : ESCAPED_STRING
+I   : /\-[1-9]\d*/ | /0/ | /[1-9]\d*/
+
+// add rules for: sp and t here
+

@@ -1,0 +1,19 @@
+from lark import Transformer
+
+class OptimusPirme(Transformer):
+    def Token(self, c):
+        return c[1]
+
+    def PY(self, c):
+        return str(c[1:-1])
+
+    def ID(self, c):
+        return str(c)
+
+    def STR(self, c):
+        return str(c)
+
+    def I(self, c):
+        return int(c)
+
+    
