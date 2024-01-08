@@ -62,7 +62,7 @@ class Interpreter:
             self.state.envs[-1].rt_all[p.name_id] = p
 
         elif name == "DefinePred":
-            self.state.envs[-1].d_all[p.name_id] = p
+            self.state.envs[-1].d_all[p.id] = p
 
         elif name == "str":  # rsp
             self.c = self.base_parser.run("sp", p)

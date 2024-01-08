@@ -1,0 +1,54 @@
+@syntax(sp){sp: e}
+
+@syntax(n){n: I}
+@syntax(x){x: ID}
+
+@syntax(t){t: "unit" | "int" | t "->" t}
+
+@syntax(e4){e.4: n}
+@syntax(e3){e.3: x}
+@syntax(e2){e.2: e "(" e ")"}
+@syntax(e1){e.1: e "+" e}
+@syntax(e0){e.0: "lam" x ":" t "." e "mal"}
+
+@semantics(oe1){
+    sum("@n_1", "@n_2", "@n_3")
+    ---
+    <"@n_1 + @n_2", @s> => <"@n_3", @s>
+}
+
+@semantics(oe2){
+    <"@e_1", @s> => <"@e_3", @s>
+    ---
+    <"@e_1 + @e_2", @s> => <"@e_3 + @e_2", @s>
+}
+
+@semantics(oe3){
+    <"@e_1", @s> => <"@e_2", @s>
+    ---
+    <"@n + @e_1", @s> => <"@n + @e_2", @s>
+}
+
+@semantics(oe4){
+    lookup(@s, "@x", "@e")
+    ---
+    <"@x", @s> => <"@e", @s>
+}
+
+@semantics(oe5){
+    <"@e_1", @s> => <"@e_3", @s>
+    ---
+    <"@e_1(@e_2)", @s> => <"@e_3(@e_2)", @s>
+}
+
+@semantics(oe6){
+    <"@e_2", @s> => <"@e_3", @s>
+    ---
+    <"@e_1(@e_2)", @s> => <"@e_1(@e_3)", @s>
+}
+
+@semantics(oe7){
+    savein(@s_1, "@x", "@e_2", @s_2)
+    ---
+    <"lam @x : @t . @e_1 mal(@e_2)", @s_1> => <"@e_1", @s_2>
+}

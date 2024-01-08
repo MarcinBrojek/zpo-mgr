@@ -1,0 +1,50 @@
+@syntax(sp){sp: e | t}
+
+@syntax(n){n: I}
+@syntax(x){x: ID}
+
+@syntax(t){t: "unit" | "int" | t /->/ t}
+
+@syntax(e4){e.4: n}
+@syntax(e3){e.3: x}
+@syntax(e2){e.2: e "(" e ")"}
+@syntax(e1){e.1: e "+" e}
+@syntax(e0){e.0: "lam" x ":" t "." e "mal"}
+
+@typing(te1){
+    ---
+    @G |- "@n" : "int"
+}
+
+@typing(te2){
+    lookuptype(@G, "@x", "@t")
+    ---
+    @G |- "@x" : "@t"
+}
+
+@typing(te3){
+    @G |- "@e_1" : "int"
+    @G |- "@e_2" : "int"
+    ---
+    @G |- "@e_1 + @e_2" : "int"
+}
+
+@typing(te4){
+    @G |- "@e" : "@t"
+    ---
+    @G |- "@e" : "unit"
+}
+
+@typing(te5){
+    @G |- "@e_1" : "@t_1 -> @t_2"
+    @G |- "@e_2" : "@t_1"
+    ---
+    @G |- "@e_1 (@e_2)" : "@t_2"
+}
+
+@typing(te6){
+    saveintype(@G_1, "@x", "@t_1", @G_2)
+    @G_2 |- "@e" : "@t_2"
+    ---
+    @G_1 |- "lam @x : @t_1 . @e mal" : "@t_1 -> @t_2"
+}
