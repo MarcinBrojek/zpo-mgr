@@ -6,7 +6,6 @@ PY  : /`[^`]*`/
 ID  : /[a-zA-Z][\w\_]*/
 STR : ESCAPED_STRING
 I   : /\-[1-9]\d*/ | /0/ | /[1-9]\d*/
-var : "@" /[a-zA-Z]+/ [/_\w+/]
 
 // add rules for: sp and t here
 
