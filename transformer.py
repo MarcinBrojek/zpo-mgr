@@ -1,12 +1,9 @@
 from lark import Transformer
 from classes import (
     Var,
-    # State,
-    # Gamma,
     ApplyPred,
     DefinePred,
     Transition,
-    # MyType,
     Typing,
     Block,
     Rs,
@@ -39,33 +36,29 @@ class OptimusPirme(Transformer):
         id = None if "_" not in str(c[0]) else str(c[0][2:])
         return Var('G', id)
 
-    # def t(self, c):
-    #     print(c)
-    #     if isinstance(c, list):
-    #         print([type(c_) for c_ in c])
-    #     if c[0][0] == "@":
-    #         id = None if "_" not in str(c[0]) else str(c[0][2:])
-    #         return MyType(id=id)
-    #     return MyType(raw_type=c[0])
-
     def c(self, c):
         return c[0]
 
     def ap(self, c):
-        id = c[0]
-        l = c[1:]
-        return ApplyPred(id, l)
+        id, i, input, output = c[0], 1, list(), list()
+        while (c[i] != "|" and i < len(c)): # TODO: is ok?
+            input.append(c[i])
+            i += 1
+        i += 1 # "|"
+        while (i < len(c)):
+            output.append(c[i])
+            i += 1
+        return ApplyPred(id, input, output)
 
     def d(self, c):
-        id = c[0]
-        input, output = list(), list()
-        for i in range(1, len(c) - 1, 2):
-            if c[i] == "+":
-                input.append(c[i + 1])
-            elif c[i] == "-":
-                output.append(c[i + 1])
-            else:
-                assert False, c[i]
+        id, i, input, output = c[0], 1, list(), list()
+        while (c[i] != "|" and i < len(c) - 1): # TODO: is ok?
+            input.append(c[i])
+            i += 1
+        i += 1 # "|"
+        while (i < len(c) - 1):
+            output.append(c[i])
+            i += 1
         code = c[-1]
         return DefinePred(id, input, output, code)
 

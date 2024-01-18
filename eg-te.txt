@@ -17,7 +17,7 @@
 }
 
 @typing(te2){
-    lookuptype(@G, "@x", "@t")
+    lookuptype(@G, "@x" | "@t")
     ---
     @G |- "@x" : "@t"
 }
@@ -43,7 +43,7 @@
 }
 
 @typing(te6){
-    saveintype(@G_1, "@x", "@t_1", @G_2)
+    saveintype(@G_1, "@x", "@t_1" | @G_2)
     @G_2 |- "@e" : "@t_2"
     ---
     @G_1 |- "lam @x : @t_1 . @e mal" : "@t_1 -> @t_2"

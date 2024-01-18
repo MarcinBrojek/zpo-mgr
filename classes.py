@@ -18,58 +18,29 @@ class Var:
     
     def __repr__(self):
         return self.__str__()
+    
+    def __eq__(self, another):
+        return isinstance(another, Var) and self.ntm == another.ntm and self.id == another.id
 
-
-# class State:
-#     def __init__(self, id):
-#         self.id = id or ""
-
-#     def __str__(self):
-#         return f"@s{self.id}"
-
-#     def __repr__(self):
-#         return self.__str__()
-
-
-# class Gamma:
-#     def __init__(self, id):
-#         self.id = id or ""
-
-#     def __str__(self):
-#         return f"@G{self.id}"
-
-#     def __repr__(self):
-#         return self.__str__()
-
-
-# class MyType:
-#     def __init__(self, id=None, raw_type=None):
-#         assert None in [id, raw_type], "Two arguments shouldn't be provided."
-#         self.id = id
-#         self.raw_type = raw_type
-
-#     def __str__(self):
-#         if self.raw_type is not None:
-#             return self.raw_type
-#         return f"@t{self.id or ''}"
-
-#     def __repr__(self):
-#         return self.__str__()
+    def __hash__(self):
+        return hash((self.ntm, self.id))
 
 
 class ApplyPred:
-    def __init__(self, id, l):
+    def __init__(self, id, input, output):
         self.id = id
-        self.l = l
+        self.input = input
+        self.output = output
 
     def __str__(self):
-        return f"@apply ({self.id}): {self.l}"
+        return f"@apply ({self.id}) ({self.input} | {self.output})"
 
     def __repr__(self):
         return self.__str__()
 
     def translate(self, base_parser):
-        self.l = translate_lst(base_parser, "sp", self.l)
+        self.input = translate_lst(base_parser, "sp", self.input)
+        self.output = translate_lst(base_parser, "sp", self.output)
 
 
 class DefinePred:
@@ -80,7 +51,7 @@ class DefinePred:
         self.code = code
 
     def __str__(self):
-        return f"@define ({self.id}) ({self.input}) -> ({self.output}) {self.code}"
+        return f"@define ({self.id}) ({self.input} | {self.output}) {self.code}\n"
 
     def __repr__(self):
         return self.__str__()
@@ -154,7 +125,7 @@ class Rs:
             f"@syntax({self.name_id})"
             + "{\n"
             + f"{self.id}.{self.number} : {self.inneroptions}"
-            + "\n}"
+            + "\n}\n"
         )
 
     def __repr__(self):
@@ -169,7 +140,7 @@ class Ro:
 
     def __str__(self):
         return (
-            f"@semantics({self.name_id})" + "{\n" + f"{self.uo}\n---\n{self.tr}" + "\n}"
+            f"@semantics({self.name_id})" + "{\n" + f"{self.uo}\n---\n{self.tr}" + "\n}\n"
         )
 
     def __repr__(self):
@@ -188,7 +159,7 @@ class Rt:
         self.ty = ty
 
     def __str__(self):
-        return f"@typing({self.name_id})" + "{\n" + f"{self.ut}\n---\n{self.ty}" + "\n}"
+        return f"@typing({self.name_id})" + "{\n" + f"{self.ut}\n---\n{self.ty}" + "\n}\n"
 
     def __repr__(self):
         return self.__str__()

@@ -11,20 +11,24 @@
 @syntax(e1){e.1: e "+" e}
 @syntax(e0){e.0: "lam" x ":" t "." e "mal"}
 
-lookup(+@s, +"@x", -"@e")`
+sum("@n_1", "@n_2" | "@n_3")`
+    return n_1 + n_2
+`
+
+lookup(@s, "@x" | "@e")`
     return s[0][x]
 `
 
-savein(+@s_1, +"@x", +"@e", -@s_2)`
+savein(@s_1, "@x", "@e" | @s_2)`
     s_1[0][x] = e
     return s_1
 `
 
-lookuptype(+@G, +"@x", -"@t")`
+lookuptype(@G, "@x" | "@t")`
     return G[x]
 `
 
-saveintype(+@G_1, +"@x", +"@t", -@G_2)`
+saveintype(@G_1, "@x", "@t" | @G_2)`
     G_1[x]=t    
     return G_1
 `
