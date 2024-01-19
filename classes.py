@@ -8,6 +8,18 @@ def translate_lst(base_parser, start, lst):
     return [translate_c(base_parser, start, c) for c in lst]
 
 
+def override_vars(c, unique_suf):
+    if isinstance(c, list):
+        return [override_vars(el, unique_suf) for el in c]
+    if isinstance(c, str):
+        return c
+    if isinstance(c, Var):
+        ntm = c.ntm + "#" + str(unique_suf)
+        var = c.id
+        return Var(ntm, var)
+    return None
+
+
 class Var:
     def __init__(self, ntm, id):
         self.ntm = ntm
@@ -41,6 +53,13 @@ class ApplyPred:
     def translate(self, base_parser):
         self.input = translate_lst(base_parser, "sp", self.input)
         self.output = translate_lst(base_parser, "sp", self.output)
+
+    def override_vars(self, suf):
+        return ApplyPred(
+            override_vars(self.id),
+            [el.override_vars(suf) for el in self.input],
+            [el.override_vars(suf) for el in self.output]
+        )
 
 
 class DefinePred:
@@ -83,6 +102,14 @@ class Transition:
         if not self.ending:
             self.c2 = translate_c(base_parser, "sp", self.c2)
 
+    def override_vars(self, suf):
+        return Transition(
+            override_vars(self.s1, suf),
+            override_vars(self.s2, suf),
+            override_vars(self.c1, suf),
+            override_vars(self.c2, suf)
+        )
+
 
 class Typing:
     def __init__(self, g, c1, r, c2):
@@ -100,6 +127,14 @@ class Typing:
     def translate(self, base_parser):
         self.c1 = translate_c(base_parser, "sp", self.c1)
         self.c2 = translate_c(base_parser, "sp", self.c2)
+
+    def override_vars(self, suf):
+        return Typing(
+            override_vars(self.g, suf),
+            override_vars(self.c1, suf),
+            override_vars(self.r, suf),
+            override_vars(self.c2, suf)
+        )
 
 
 class Block:
@@ -151,6 +186,13 @@ class Ro:
             c.translate(base_parser)
         self.tr.translate(base_parser)
 
+    def override_vars(self, suf):
+        return Ro(
+            self.name_id.override_vars(suf),
+            [el.override_vars(suf) for el in self.uo],
+            self.tr.override_vars(suf)
+        )
+
 
 class Rt:
     def __init__(self, name_id, ut, ty):
@@ -169,3 +211,10 @@ class Rt:
             c.translate(base_parser)
 
         self.ty.translate(base_parser)
+
+    def override_vars(self, suf):
+        return Rt(
+            self.name_id.override_vars(suf),
+            [el.override_vars(suf) for el in self.ut],
+            self.ty.override_vars(suf)
+        )
