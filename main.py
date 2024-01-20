@@ -17,11 +17,11 @@ def main(argv):
         parser = Lark(grammar=grammar_text, start="p", parser="earley")
         tree = parser.parse(input_code)
         optimused_tree = OptimusPirme().transform(tree)
-        print(str(optimused_tree))
+        # print(str(optimused_tree))
 
         interpreter = Interpreter()
         interpreter.run(optimused_tree)
-        print(optimused_tree)
+        # print(optimused_tree)
 
 
 if __name__ == "__main__":

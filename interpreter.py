@@ -6,6 +6,7 @@ from classes import (
     Ro,
     Rt,
 )
+from run import Prover
 
 
 class IEnv:
@@ -27,7 +28,7 @@ class IEnv:
 class IState:
     def __init__(self, envs=None, store=None, gamma=None):
         self.envs = envs or list([IEnv()])
-        self.program_state = (store or dict(), gamma or dict())
+        self.program_state = [store or dict(), gamma or dict()]
 
 
 class Interpreter:
@@ -66,8 +67,11 @@ class Interpreter:
 
         elif name == "str":  # rsp
             self.c = self.base_parser.run("sp", p)
-            # while self.c is not None:
-            #     if self.preform_so_step() == False:
-            #         raise Exception("Stuck in sos")
+            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
+            while prover.try_perform_any_transition():
+                pass
+            print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
+            if prover.c is not None: # final state
+                raise Exception("Stuck in sos")
+            self.program_state = prover.s
 
-        # print(p)

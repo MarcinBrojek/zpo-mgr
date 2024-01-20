@@ -29,11 +29,11 @@ class OptimusPirme(Transformer):
         return str(c[0][1:-1])
 
     def s(self, c):
-        id = None if "_" not in str(c[0]) else str(c[0][2:])
+        id = None if "_" not in str(c[0]) else str(c[0][3:])
         return Var('s', id)
 
     def g(self, c):
-        id = None if "_" not in str(c[0]) else str(c[0][2:])
+        id = None if "_" not in str(c[0]) else str(c[0][3:])
         return Var('G', id)
 
     def c(self, c):
