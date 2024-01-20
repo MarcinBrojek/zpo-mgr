@@ -28,7 +28,7 @@ class IEnv:
 class IState:
     def __init__(self, envs=None, store=None, gamma=None):
         self.envs = envs or list([IEnv()])
-        self.program_state = (store or dict(), gamma or dict())
+        self.program_state = [store or dict(), gamma or dict()]
 
 
 class Interpreter:
@@ -70,6 +70,7 @@ class Interpreter:
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
             while prover.try_perform_any_transition():
                 pass
+            print(f"state: {prover.s}, \nconstr: {prover.c}\n\n")
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")
             self.program_state = prover.program_state

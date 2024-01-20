@@ -21,9 +21,10 @@ def override_vars(c, unique_suf):
 
 
 class Var:
-    def __init__(self, ntm, id):
+    def __init__(self, ntm, id, to_correct=0):
         self.ntm = ntm
         self.id = id or ""
+        self.to_correct = to_correct
 
     def __str__(self):
         return f"@{self.ntm}_{self.id}"
@@ -56,7 +57,7 @@ class ApplyPred:
 
     def override_vars(self, suf):
         return ApplyPred(
-            override_vars(self.id),
+            override_vars(self.id, suf),
             [override_vars(el, suf) for el in self.input],
             [override_vars(el, suf) for el in self.output]
         )

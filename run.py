@@ -1,5 +1,6 @@
 from classes import Var, ApplyPred, Typing, Transition
-# !for now: constrution is var / string / list of constructions
+from copy import deepcopy
+# !for now: constrution is None / var / string / list / dict of constructions
 
 
 # c - construction, m - maping for vars
@@ -7,11 +8,11 @@ from classes import Var, ApplyPred, Typing, Transition
 def try_update_constr(c, m):
     if isinstance(c, list):
         b, new_c = zip(*[try_update_constr(el, m) for el in c])
-        return True, new_c if all(b) else (False, None)
+        return (True, list(new_c)) if all(b) else (False, None)
     if isinstance(c, str):
         return True, c
     if isinstance(c, Var):
-        return True, m[c] if c in m else (False, None)
+        return (True, m[c]) if c in m else (False, None)
     if c is None:
         return True, None
     return False, None
@@ -34,7 +35,7 @@ def try_unify_constrs(c1, c2):
     if isinstance(c1, str) and isinstance(c2, str):
         return (c1 == c2), m
     if (not isinstance(c1, Var)) and isinstance(c2, Var):
-        m[c2] = c1
+        m[c2] = deepcopy(c1)
         return True, m
     if (c1 is None) and (c2 is None):
         return True, m
@@ -46,13 +47,15 @@ class Prover:
     def __init__(self, parser, env, program_state, c):
         self.d_all, self.rt_all, self.ro_all = env.d_all, env.rt_all, env.ro_all
         self.unit = parser.run("sp", "unit")
-        self.s = program_state # TODO: safe, deep copy needed for s and c!
+        self.s = program_state # TODO: deep copy needed for s and c - check if needed?
         self.c = c
 
     def try_perform_any_transition(self):
         for ro_id in self.ro_all:
             ro = self.ro_all[ro_id]
             b, m = try_unify_constrs([self.s, self.c], [ro.tr.s1, ro.tr.c1])
+            # print("obecnie:", [self.s, self.c])
+            # print("propozycja przyjeta:", [ro.tr.s1, ro.tr.c1])
             if not b:
                 continue
 
@@ -84,6 +87,7 @@ class Prover:
         locals = dict()
         for var in m:
             locals[var.ntm + "_" + var.id] = m[var] # default representation
+        print(locals)
         exec(d.code, {}, locals)
         for local in locals:
             pos_ = local.find("_")
@@ -147,6 +151,7 @@ class Prover:
         unique_suf += 1
         my_trs = trs.copy()
         current = my_trs.pop()
+        print(" >" * unique_suf + f"DEBUG: top trs = {current}\n")
 
         if isinstance(current, ApplyPred):
             b, new_m = self.apply_pred(current, m)
@@ -160,8 +165,7 @@ class Prover:
                 return False
             
             b, m_tu = try_unify_constrs([s2, c2], [current[0], current[1]])
-            new_m = m | m_tu
-            if (not b) or ((m_tu | m) != new_m):
+            if (not b) or ((m_tu | m) != (m | m_tu)):
                 return False
             
             # check if used constr in prove is well typed
@@ -171,7 +175,7 @@ class Prover:
             if not my_trs:
                 return (s2, c2)
 
-            return self.try_prove_transition(my_trs, new_m, unique_suf)
+            return self.try_prove_transition(my_trs, m | m_tu, unique_suf)
 
         if not isinstance(current, Transition):
             return False
@@ -184,8 +188,11 @@ class Prover:
             ro = self.ro_all[ro_id].override_vars(unique_suf)
             uo, tr = ro.uo, ro.tr
             b, m_tr = try_unify_constrs(current_l, [tr.s1, tr.c1])
+            # print(f"DEBUG: current:{current_l}")
+            # print(f"DEBUG: left side,tr:{[tr.s1, tr.c1]}")
             if not b:
                 continue
+            # print(f"DEBUG: udane unify:{m_tr}")
             
             last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)
             if last_s2c2:
