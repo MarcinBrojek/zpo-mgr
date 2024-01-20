@@ -1,0 +1,55 @@
+@syntax(sp){sp: e | t}
+@syntax(e){e: /0/ | /s/ "(" e ")" | e /\+/ e}
+@syntax(t){t: /unit/}
+
+@typing(te1){
+    ---
+    @G |- "@e" : "unit"
+}
+
+@typing(te2){
+    ---
+    @G |- "@sp" : "unit"
+}
+
+@semantics(oe1){
+    ---
+    <"@e_1 + s(@e_2)", @s> => <"s(@e_1) + @e_2", @s>
+}
+
+@semantics(oe2){
+    ---
+    <"@e_1 + 0", @s> => <"@e_1", @s>
+}
+
+@semantics(oe3){
+    <"@e_1", @s> => <"@e_3", @s>
+    ---
+    <"@e_1 + @e_2", @s> => <"@e_3 + @e_2", @s>
+}
+
+@semantics(oe4){
+    <"@e_2", @s> => <"@e_3", @s>
+    ---
+    <"@e_1 + @e_2", @s> => <"@e_1 + @e_3", @s>
+}
+
+update("s(@e)", @s_1 | "@e", @s_2)`
+s_2 = s_1
+if type(s_2[1]) != int:
+    s_2[1] = 1
+else:
+    s_2[1] += 1
+`
+@semantics(transferOneToken){
+    update("@e_1", @s_1 | "@e_2", @s_2)
+    ---
+    <"@e_1", @s_1> => <"@e_2", @s_2>
+}
+
+@semantics(end){
+    ---
+    <"0", @s> => @s
+}
+
+"s(s(0)) + s(0) + 0 + s(0)"

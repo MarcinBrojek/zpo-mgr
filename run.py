@@ -6,7 +6,15 @@ from copy import deepcopy
 # c - construction, m - maping for vars
 # returns: success?, new_c
 def try_update_constr(c, m):
+    if isinstance(c, dict):
+        if not c:
+            return True, dict()
+        b1, c_keys = zip(*[try_update_constr(el, m) for el in c.keys()])
+        b2, c_values = zip(*[try_update_constr(el, m) for el in c.keys()])
+        return (True, dict(list(zip(list(c_keys), list(c_values))))) if all(b1) and all(b2) else (False, None)
     if isinstance(c, list):
+        if not c:
+            return True, list()
         b, new_c = zip(*[try_update_constr(el, m) for el in c])
         return (True, list(new_c)) if all(b) else (False, None)
     if isinstance(c, str):
@@ -87,7 +95,6 @@ class Prover:
         locals = dict()
         for var in m:
             locals[var.ntm + "_" + var.id] = m[var] # default representation
-        print(locals)
         exec(d.code, {}, locals)
         for local in locals:
             pos_ = local.find("_")
@@ -118,6 +125,7 @@ class Prover:
         unique_suf += 1
         my_tys = tys.copy()
         current = my_tys.pop()
+        # print(" <" * unique_suf + f"DEBUG: top tys = {current}\n")
 
         if isinstance(current, ApplyPred):
             b, new_m = self.apply_pred(current, m)
@@ -137,6 +145,7 @@ class Prover:
             # 1a. set new vars in maybe matching rule
             rt = self.rt_all[rt_id].override_vars(unique_suf)
             ut, ty = rt.ut, rt.ty
+            # print(" :" * unique_suf + f"DEBUG: top tys = {rt.ty}\n")
             
             # 1b. try match with rule (ty)
             b, m_ty = try_unify_constrs(current_l, [ty.g, ty.c1, ty.r, ty.c2])
@@ -151,7 +160,7 @@ class Prover:
         unique_suf += 1
         my_trs = trs.copy()
         current = my_trs.pop()
-        print(" >" * unique_suf + f"DEBUG: top trs = {current}\n")
+        # print(" >" * unique_suf + f"DEBUG: top trs = {current}\n")
 
         if isinstance(current, ApplyPred):
             b, new_m = self.apply_pred(current, m)
@@ -168,8 +177,8 @@ class Prover:
             if (not b) or ((m_tu | m) != (m | m_tu)):
                 return False
             
-            # check if used constr in prove is well typed
-            if not self.try_prove_typing([Typing(s2[0], c2, ":", self.unit)], dict()): # TODO: : is ok?
+            # check if used constr in prove is well typed (not in final state)
+            if (c2 is not None) and (not self.try_prove_typing([Typing(s2[0], c2, ":", self.unit)], dict())):
                 return False
 
             if not my_trs:
