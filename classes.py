@@ -57,8 +57,8 @@ class ApplyPred:
     def override_vars(self, suf):
         return ApplyPred(
             override_vars(self.id),
-            [el.override_vars(suf) for el in self.input],
-            [el.override_vars(suf) for el in self.output]
+            [override_vars(el, suf) for el in self.input],
+            [override_vars(el, suf) for el in self.output]
         )
 
 
@@ -188,7 +188,7 @@ class Ro:
 
     def override_vars(self, suf):
         return Ro(
-            self.name_id.override_vars(suf),
+            override_vars(self.name_id, suf),
             [el.override_vars(suf) for el in self.uo],
             self.tr.override_vars(suf)
         )
@@ -214,7 +214,7 @@ class Rt:
 
     def override_vars(self, suf):
         return Rt(
-            self.name_id.override_vars(suf),
+            override_vars(self.name_id, suf),
             [el.override_vars(suf) for el in self.ut],
             self.ty.override_vars(suf)
         )

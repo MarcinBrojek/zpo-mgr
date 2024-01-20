@@ -32,7 +32,7 @@ def try_unify_constrs(c1, c2):
             m_or = m_or | m_e
         return True, m_or
     if isinstance(c1, str) and isinstance(c2, str):
-        return c1 == c2, m
+        return (c1 == c2), m
     if (not isinstance(c1, Var)) and isinstance(c2, Var):
         m[c2] = c1
         return True, m
@@ -52,17 +52,17 @@ class Prover:
     def try_perform_any_transition(self):
         for ro_id in self.ro_all:
             ro = self.ro_all[ro_id]
-            b, m = try_unify_constrs([self.s, self.c], [ro.s1, ro.c1])
+            b, m = try_unify_constrs([self.s, self.c], [ro.tr.s1, ro.tr.c1])
             if not b:
                 continue
 
-            res = self.try_prove_transition(ro, m)
+            res = self.try_prove_transition([ro.tr], m)
             if res:
-                self.s, self,c = res # s2, c2
+                self.s, self.c = res # s2, c2
                 return True
         return False
 
-    # d_all - all define predicates, ap - apply predicate, m_in - maping for ap.input
+    # ap - apply predicate, m_in - maping for ap.input
     # returns: success?, maping for vars in d.output
     def apply_pred(self, ap, m_in):
         # 0. find d in d_all
@@ -88,11 +88,13 @@ class Prover:
         for local in locals:
             pos_ = local.find("_")
             if pos_ != -1:
-                var = local[0:pos_]
+                ntm = local[0:pos_]
+                id = local[(pos_ + 1):]
+                var = Var(ntm, id)
                 m[var] = locals[local]
 
         # 4. with new locals variables (m) -> set d.output (now full known)
-        b, d_output = try_update_constr(ap.input, m)
+        b, d_output = try_update_constr(d.output, m)
         if not b:
             return False, None
 
@@ -117,7 +119,7 @@ class Prover:
             b, new_m = self.apply_pred(current, m)
             if not b:
                 return False
-            return self.try_prove_typing(my_tys, new_m)
+            return self.try_prove_typing(my_tys, new_m, unique_suf)
         
         # 0. update all c in current typing
         if not isinstance(current, Typing):
@@ -129,13 +131,12 @@ class Prover:
         # 1. iterate through all rt rules to find matching
         for rt_id in self.rt_all:
             # 1a. set new vars in maybe matching rule
-            ut = self.rt_all[rt_id].ut.override_vars(unique_suf)
-            ty = self.rt_all[rt_id].ty.override_vars(unique_suf)
+            rt = self.rt_all[rt_id].override_vars(unique_suf)
+            ut, ty = rt.ut, rt.ty
             
             # 1b. try match with rule (ty)
-            ty_l = [ty.g, ty.c1, ty.r, ty.c2]
-            b, m_ty = try_unify_constrs(current_l, ty_l)
-            if b and self.try_prove_typing(my_tys + ut[::-1], m | m_ty):
+            b, m_ty = try_unify_constrs(current_l, [ty.g, ty.c1, ty.r, ty.c2])
+            if b and self.try_prove_typing(my_tys + ut[::-1], m | m_ty, unique_suf):
                 return True
 
         return False            
@@ -151,7 +152,7 @@ class Prover:
             b, new_m = self.apply_pred(current, m)
             if not b:
                 return False
-            return self.try_prove_transition(my_trs, new_m)
+            return self.try_prove_transition(my_trs, new_m, unique_suf)
         
         if isinstance(current, tuple): # (s2-unify, c2-unify, s2-known, c2-known)
             b, [s2, c2] = try_update_constr([current[2], current[3]], m)
@@ -170,7 +171,7 @@ class Prover:
             if not my_trs:
                 return (s2, c2)
 
-            return self.try_prove_transition(my_trs, new_m)
+            return self.try_prove_transition(my_trs, new_m, unique_suf)
 
         if not isinstance(current, Transition):
             return False
@@ -180,13 +181,13 @@ class Prover:
             return False
         
         for ro_id in self.ro_all:
-            uo = self.ro_all[ro_id].uo.override_vars(unique_suf)
-            tr = self.ro_all[ro_id].tr.override_vars(unique_suf)
+            ro = self.ro_all[ro_id].override_vars(unique_suf)
+            uo, tr = ro.uo, ro.tr
             b, m_tr = try_unify_constrs(current_l, [tr.s1, tr.c1])
             if not b:
                 continue
             
-            last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr)
+            last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)
             if last_s2c2:
                 return last_s2c2
             
