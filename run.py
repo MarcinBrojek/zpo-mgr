@@ -1,6 +1,6 @@
 from classes import Var, ApplyPred, Typing, Transition
 from copy import deepcopy
-# !for now: constrution is None / var / string / list / dict of constructions
+# !for now: constrution is None / var / string / int / list / +-dict of constructions
 
 
 # c - construction, m - maping for vars
@@ -17,10 +17,10 @@ def try_update_constr(c, m):
             return True, list()
         b, new_c = zip(*[try_update_constr(el, m) for el in c])
         return (True, list(new_c)) if all(b) else (False, None)
-    if isinstance(c, str):
-        return True, c
     if isinstance(c, Var):
         return (True, m[c]) if c in m else (False, None)
+    if isinstance(c, str) or isinstance(c, int):
+        return True, c
     if c is None:
         return True, None
     return False, None
@@ -30,9 +30,13 @@ def try_update_constr(c, m):
 # returns: success?, maping for vars in c2
 def try_unify_constrs(c1, c2): 
     m = dict()
+    # print(c1, type(c1), "<=>", c2, type(c2))
     if isinstance(c1, list) and isinstance(c2, list):
+        if (not c1) and (not c2):
+            return True, m
         b, m = zip(*[try_unify_constrs(e1, e2) for e1, e2 in zip(c1, c2)])
         if (not all(b)) or (len(c1) != len(c2)):
+            # print(c1, c2, len(c1), len(c2), "TU")
             return False, None
         m_or = dict()
         for m_e in m:
@@ -41,6 +45,8 @@ def try_unify_constrs(c1, c2):
             m_or = m_or | m_e
         return True, m_or
     if isinstance(c1, str) and isinstance(c2, str):
+        return (c1 == c2), m
+    if isinstance(c1, int) and isinstance(c2, int):
         return (c1 == c2), m
     if (not isinstance(c1, Var)) and isinstance(c2, Var):
         m[c2] = deepcopy(c1)
@@ -55,15 +61,17 @@ class Prover:
     def __init__(self, parser, env, program_state, c):
         self.d_all, self.rt_all, self.ro_all = env.d_all, env.rt_all, env.ro_all
         self.unit = parser.run("sp", "unit")
-        self.s = program_state # TODO: deep copy needed for s and c - check if needed?
+        self.s = program_state
         self.c = c
 
     def try_perform_any_transition(self):
+        if self.c is None:
+            return False
         for ro_id in self.ro_all:
             ro = self.ro_all[ro_id]
             b, m = try_unify_constrs([self.s, self.c], [ro.tr.s1, ro.tr.c1])
-            # print("obecnie:", [self.s, self.c])
-            # print("propozycja przyjeta:", [ro.tr.s1, ro.tr.c1])
+            # print("obecnie:", self.c)
+            # print("propozycja:", ro.tr.c1)
             if not b:
                 continue
 
@@ -94,15 +102,19 @@ class Prover:
         # 3. execute code from d with m as locals variables
         locals = dict()
         for var in m:
-            locals[var.ntm + "_" + var.id] = m[var] # default representation
+            if not var.id:
+                locals[var.ntm] = m[var]
+            else:
+                locals[var.ntm + "_" + var.id] = m[var]
         exec(d.code, {}, locals)
         for local in locals:
+            var = Var(local, None)
             pos_ = local.find("_")
             if pos_ != -1:
                 ntm = local[0:pos_]
                 id = local[(pos_ + 1):]
                 var = Var(ntm, id)
-                m[var] = locals[local]
+            m[var] = locals[local]
 
         # 4. with new locals variables (m) -> set d.output (now full known)
         b, d_output = try_update_constr(d.output, m)

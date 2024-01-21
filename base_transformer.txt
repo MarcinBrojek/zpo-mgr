@@ -2,9 +2,6 @@ from lark import Token, Transformer
 from classes import Var
 
 class OptimusPirme(Transformer):
-    def PY(self, c):
-        return str(c[1:-1])
-
     def ID(self, c):
         return str(c)
 

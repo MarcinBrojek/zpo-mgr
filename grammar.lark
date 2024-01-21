@@ -7,15 +7,15 @@ ID  : /[a-zA-Z][\w\_]*/
 STR : ESCAPED_STRING
 I   : /\-[1-9]\d*/ | /0/ | /[1-9]\d*/
 
-rsp : ESCAPED_STRING
+rsp : PY
 
 s   : /@s(\_\w+)?/
 g   : /@G(\_\w+)?/
 // t   : /@t(\_\w+)?/ | STR
 c   : rsp  | s       | g  // TODO: sP
 
-ap  : ID "(" c ("," c)* /\|/ c ("," c)* ")"
-d   : ID "(" c ("," c)* /\|/ c ("," c)* ")" PY
+ap  : ID "(" [c] ("," c)* /\|/ [c] ("," c)* ")"
+d   : ID "(" [c] ("," c)* /\|/ [c] ("," c)* ")" PY
 
 tr    : "<" c "," s ">" "=>" "<" c "," s ">"
 trend :  "<" c "," s ">" "=>" s
@@ -25,12 +25,13 @@ REL : /:/ | /<:/
 ty  : g "|-" c REL c
 ut  : (ap | ty)*
 
-p  : (_r | d | bp | rsp)*
+p  : (_r | d | bp | code)*
 bp : "{" p "}"
 _r  : rs | ro | rt
 
 inneroption : ([ID | STR | /\/[^\/]*\//])+
 
-rs : "@syntax" "(" ID ")" "{" ID ["."I] ":" inneroption ("|" inneroption)*"}"
-ro : "@semantics" "(" ID ")" "{" uo "---" [tr | trend] "}"
-rt : "@typing" "(" ID ")" "{" ut "---" ty "}"
+code : "@code" rsp
+rs   : "@syntax" "(" ID ")" "{" ID ["."I] ":" inneroption ("|" inneroption)*"}"
+ro   : "@semantics" "(" ID ")" "{" uo "---" [tr | trend] "}"
+rt   : "@typing" "(" ID ")" "{" ut "---" ty "}"
