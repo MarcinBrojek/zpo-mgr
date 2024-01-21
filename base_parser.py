@@ -31,7 +31,7 @@ class BaseParser:
         for rs in self.rs_all:
             if rs.id not in known_ntm:
                 grammar_txt += f"{rs.id}: var{rs.id}\n" # name var{rs.id} should be unique
-                grammar_txt += f'var{rs.id}: "@" ' + r"/[a-zA-Z]+/ [/_\w+/]" + "\n"
+                grammar_txt += f'var{rs.id}: "@" ' + r"/" + rs.id + r"/" + r" [/_\w+/]" + "\n"
                 known_ntm.append(rs.id)
 
             rule_txt = ""

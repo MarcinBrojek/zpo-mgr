@@ -66,6 +66,7 @@ class Interpreter:
             self.state.envs[-1].d_all[p.id] = p
 
         elif name == "str":  # rsp
+            i = 0
             self.c = self.base_parser.run("sp", p)
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
             while prover.try_perform_any_transition():

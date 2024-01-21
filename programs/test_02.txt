@@ -1,4 +1,4 @@
-@syntax(sp){sp: /unit/ | /print/ "(" string ")"}
+@syntax(sp){sp: /unit/ | /print/ "(" sp ")" | string}
 @syntax(string){string: STR}
 
 @typing(t1){
