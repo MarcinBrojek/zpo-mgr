@@ -96,15 +96,19 @@ class Prover:
         # 3. execute code from d with m as locals variables
         locals = dict()
         for var in m:
-            locals[var.ntm + "_" + var.id] = m[var] # default representation
+            if not var.id:
+                locals[var.ntm] = m[var]
+            else:
+                locals[var.ntm + "_" + var.id] = m[var]
         exec(d.code, {}, locals)
         for local in locals:
+            var = Var(local, None)
             pos_ = local.find("_")
             if pos_ != -1:
                 ntm = local[0:pos_]
                 id = local[(pos_ + 1):]
                 var = Var(ntm, id)
-                m[var] = locals[local]
+            m[var] = locals[local]
 
         # 4. with new locals variables (m) -> set d.output (now full known)
         b, d_output = try_update_constr(d.output, m)

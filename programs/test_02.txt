@@ -1,21 +1,35 @@
+@syntax(sp){sp: /unit/ | /print/ "(" string ")"}
+@syntax(string){string: STR}
+
+@typing(t1){
+    ---
+    @G |- `@sp` : `unit`
+}
+
 {
-    @syntax(sp){sp: /unit/ | /print/ "(" str ")"}
-    @syntax(str){str: STR}
-
-    @typing(t1){
-        ---
-        @G |- `@sp` : `unit`
-    }
-
     @semantics(o1){
-        print(`@str` |)
+        pred_print(`@string` |)
         ---
-        <`print(@str)`, @s> => @s
+        <`print(@string)`, @s> => @s
     }
 
-    print(`@str_1` |)`
-print(str_1[0])
+    pred_print(`@string_1` |)`
+print(string_1[0])
     `
 
-    @code`print( "dssdds" )`
+    @code`print("printed in block")`
 }
+
+@syntax(sp){sp: /unit/ | /print/ "(" sp ")" | STR}
+
+@semantics(o1){
+    pred_print(`@sp` |)
+    ---
+    <`print(@sp)`, @s> => @s
+}
+
+pred_print(`@sp` |)`
+print(sp[0])
+`
+
+@code`print( "printed outside of block" )`
