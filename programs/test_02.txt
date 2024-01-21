@@ -1,0 +1,21 @@
+{
+    @syntax(sp){sp: /unit/ | /print/ "(" str ")"}
+    @syntax(str){str: STR}
+
+    @typing(t1){
+        ---
+        @G |- `@sp` : `unit`
+    }
+
+    @semantics(o1){
+        print(`@str` |)
+        ---
+        <`print(@str)`, @s> => @s
+    }
+
+    print(`@str_1` |)`
+print(str_1[0])
+    `
+
+    @code`print( "dssdds" )`
+}

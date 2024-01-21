@@ -1,6 +1,6 @@
 from classes import Var, ApplyPred, Typing, Transition
 from copy import deepcopy
-# !for now: constrution is None / var / string / list / dict of constructions
+# !for now: constrution is None / var / string / list / +-dict of constructions
 
 
 # c - construction, m - maping for vars
@@ -31,6 +31,8 @@ def try_update_constr(c, m):
 def try_unify_constrs(c1, c2): 
     m = dict()
     if isinstance(c1, list) and isinstance(c2, list):
+        if (not c1) and (not c2):
+            return True, m
         b, m = zip(*[try_unify_constrs(e1, e2) for e1, e2 in zip(c1, c2)])
         if (not all(b)) or (len(c1) != len(c2)):
             return False, None
@@ -55,7 +57,7 @@ class Prover:
     def __init__(self, parser, env, program_state, c):
         self.d_all, self.rt_all, self.ro_all = env.d_all, env.rt_all, env.ro_all
         self.unit = parser.run("sp", "unit")
-        self.s = program_state # TODO: deep copy needed for s and c - check if needed?
+        self.s = program_state
         self.c = c
 
     def try_perform_any_transition(self):

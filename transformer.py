@@ -26,7 +26,7 @@ class OptimusPirme(Transformer):
         return int(c)
 
     def rsp(self, c):
-        return str(c[0][1:-1])
+        return str(c[0])
 
     def s(self, c):
         id = None if "_" not in str(c[0]) else str(c[0][3:])
@@ -42,22 +42,26 @@ class OptimusPirme(Transformer):
     def ap(self, c):
         id, i, input, output = c[0], 1, list(), list()
         while (c[i] != "|" and i < len(c)): # TODO: is ok?
-            input.append(c[i])
+            if c[i] is not None:
+                input.append(c[i])
             i += 1
         i += 1 # "|"
         while (i < len(c)):
-            output.append(c[i])
+            if c[i] is not None:
+                output.append(c[i])
             i += 1
         return ApplyPred(id, input, output)
 
     def d(self, c):
         id, i, input, output = c[0], 1, list(), list()
         while (c[i] != "|" and i < len(c) - 1): # TODO: is ok?
-            input.append(c[i])
+            if c[i] is not None:
+                input.append(c[i])
             i += 1
         i += 1 # "|"
         while (i < len(c) - 1):
-            output.append(c[i])
+            if c[i] is not None:
+                output.append(c[i])
             i += 1
         code = c[-1]
         return DefinePred(id, input, output, code)
@@ -73,7 +77,6 @@ class OptimusPirme(Transformer):
         return Transition(s1, s2, c1)
 
     def uo(self, c):
-        # return list(c)
         return c
 
     def REL(self, c):
@@ -84,7 +87,6 @@ class OptimusPirme(Transformer):
         return Typing(g, c1, r, c2)
 
     def ut(self, c):
-        # return list(c)
         return c
 
     def p(self, c):
@@ -95,6 +97,9 @@ class OptimusPirme(Transformer):
 
     def inneroption(self, c):
         return list(c)
+
+    def code(self, c):
+        return c
 
     def rs(self, c):
         name_id = c[0]

@@ -69,8 +69,7 @@ class Interpreter:
             self.c = self.base_parser.run("sp", p)
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
             while prover.try_perform_any_transition():
-                pass
-            print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
+                print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")
             self.program_state = prover.s
