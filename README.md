@@ -1,11 +1,3 @@
-## Table of contents:
-* [General info] (#general-info)
-* [Semantics] (#semantics)
-* [Todo list] (#todo-list)
-* [Technologies] (#technologies)
-* [Setup] (#setup)
-* [Example of use] (#example-of-use)
-
 ## General info
 The project is created ad part of a master's thesis.
 TODO
