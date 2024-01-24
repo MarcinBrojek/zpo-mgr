@@ -1,13 +1,13 @@
+# returns: translated rsp into sp (list of rsp into list of sp)
 def translate_c(base_parser, start, c):
     if isinstance(c, str):
         return base_parser.run(start, c)
+    if isinstance(c, list):
+        return [translate_c(base_parser, start, el) for el in c]
     return c
 
 
-def translate_lst(base_parser, start, lst):
-    return [translate_c(base_parser, start, c) for c in lst]
-
-
+# returns: new c (copy) witch changed vars' names 
 def override_vars(c, unique_suf):
     if isinstance(c, dict):
         c_keys = override_vars(list(c.keys()), unique_suf)
@@ -58,8 +58,8 @@ class ApplyPred:
         return self.__str__()
 
     def translate(self, base_parser):
-        self.input = translate_lst(base_parser, "sp", self.input)
-        self.output = translate_lst(base_parser, "sp", self.output)
+        self.input = translate_c(base_parser, "sp", self.input)
+        self.output = translate_c(base_parser, "sp", self.output)
 
     def override_vars(self, suf):
         return ApplyPred(
@@ -83,8 +83,8 @@ class DefinePred:
         return self.__str__()
 
     def translate(self, base_parser):
-        self.input = translate_lst(base_parser, "sp", self.input)
-        self.output = translate_lst(base_parser, "sp", self.output)
+        self.input = translate_c(base_parser, "sp", self.input)
+        self.output = translate_c(base_parser, "sp", self.output)
 
 
 class Transition:

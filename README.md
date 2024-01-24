@@ -9,7 +9,7 @@ TODO
 - [x] Create more detailed info about constructions during parsing.
 - [ ] Add possibility to print base_gramma, proves as part of user's code.
 - [ ] Add mechanisms that can manipulate executing user's code, for e.x. exit program / subprogram.
-- [ ] Optimize parser - make less times of recreating base_gramma and base_transformer.
+- [x] Optimize parser - make less times of recreating base_gramma and base_transformer.
 - [ ] Make converter for rules to nice looking latech code.
 - [ ] Create a feature that allows parse code not only from base - sp(subprogram) - nonterminal.
 - [ ] Complete `README`
