@@ -1,40 +1,26 @@
-@syntax(sp){sp: n | string | /i/ n | /s/ string | "(" sp "+" sp ")" | t}
+@syntax(sp){sp: n | string | "(" sp "+" sp ")" | t}
 @syntax(t){t: /unit/ | /t_dot/}
 @syntax(n){n: I}
 @syntax(string){string: STR}
 
-is_string(`@string` | `@string_1`)`
-string_1 = list(["\"" + str(isinstance(string[0], str)) + "\""])
-`
-
-is_int(`@n_1` | `@string_1`)`
-string_1 = list(["\"" + str(isinstance(n_1[0], int)) + "\""])
-`
-
 @typing(t1){
-    is_int(`@n` | `"True"`)
     ---
-    @G |- `i@n` : `unit`
+    @G |- `@n` : `unit`
 }
 
 @typing(t2){
-    is_string(`@string` | `"True"`)
     ---
-    @G |- `s@string` : `unit`
+    @G |- `@string` : `unit`
 }
 
 @typing(t3){
-    is_int(`@n_1` | `"True"`)
-    is_int(`@n_2` | `"True"`)
     ---
-    @G |- `(i@n_1 + i@n_2)` : `t_dot`
+    @G |- `(@n_1 + @n_2)` : `t_dot`
 }
 
 @typing(t4){
-    is_string(`@string_1` | `"True"`)
-    is_string(`@string_2` | `"True"`)
     ---
-    @G |- `(s@string_1 + s@string_2)` : `t_dot`
+    @G |- `(@string_1 + @string_2)` : `t_dot`
 }
 
 @typing(t5){
@@ -68,44 +54,44 @@ string_1 = list(["\"" + str(isinstance(n_1[0], int)) + "\""])
     <`(@sp_1 + @sp_2)`, @s> => <`(@sp_1 + @sp_3)`, @s>
 }
 
-string_to_string(`s@string_1`, `s@string_2` | `s@string_3`)`
+string_to_string(`@string_1`, `@string_2` | `@string_3`)`
 string_3 = list(["\"" + str(int(string_1[0][1:-1]) + int(string_2[0][1:-1])) + "\""])
 `
 
-string_to_int(`s@string_1`, `s@string_2` | `i@n_3`)`
+string_to_int(`@string_1`, `@string_2` | `@n_3`)`
 n_3 = list([int(string_1[0][1:-1]) + int(string_2[0][1:-1])])
 `
 
-int_to_string(`i@n_1`, `i@n_2` | `s@string_3`)`
+int_to_string(`@n_1`, `@n_2` | `@string_3`)`
 string_3 = list(["\"" + str((n_1[0] + n_2[0])) + "\""])
 `
 
-int_to_int(`i@n_1`, `i@n_2` | `i@n_3`)`
+int_to_int(`@n_1`, `@n_2` | `@n_3`)`
 n_3 = list([n_1[0] + n_2[0]])
 `
 
 @semantics(oe3){
-    string_to_string(`s@string_1`, `s@string_2` | `s@string_3`)
+    string_to_string(`@string_1`, `@string_2` | `@string_3`)
     ---
-    <`(s@string_1 + s@string_2)`, @s> => <`s@string_3`, @s>
+    <`(@string_1 + @string_2)`, @s> => <`@string_3`, @s>
 }
 
 @semantics(oe4){
-    string_to_int(`s@string_1`, `s@string_2` | `i@n_3`)
+    string_to_int(`@string_1`, `@string_2` | `@n_3`)
     ---
-    <`(s@string_1 + s@string_2)`, @s> => <`i@n_3`, @s>
+    <`(@string_1 + @string_2)`, @s> => <`@n_3`, @s>
 }
 
 @semantics(oe5){
-    int_to_string(`i@n_1`, `i@n_2` | `s@string_3`)
+    int_to_string(`@n_1`, `@n_2` | `@string_3`)
     ---
-    <`(i@n_1 + i@n_2)`, @s> => <`s@string_3`, @s>
+    <`(@n_1 + @n_2)`, @s> => <`@string_3`, @s>
 }
 
 @semantics(oe6){
-    int_to_int(`i@n_1`, `i@n_2` | `i@n_3`)
+    int_to_int(`@n_1`, `@n_2` | `@n_3`)
     ---
-    <`(i@n_1 + i@n_2)`, @s> => <`i@n_3`, @s>
+    <`(@n_1 + @n_2)`, @s> => <`@n_3`, @s>
 }
 
 s_end(@s_1, `@n` | @s_2)`
@@ -119,13 +105,14 @@ s_2 = string
 @semantics(oe7){
     s_end(@s_1, `@n` | @s_2)
     ---
-    <`i@n`, @s_1> => @s_2
+    <`@n`, @s_1> => @s_2
 }
 
 @semantics(oe8){
     s_end(@s_1, `@string` | @s_2)
     ---
-    <`s@string`, @s_1> => @s_2
+    <`@string`, @s_1> => @s_2
 }
 
-@code`(i5 + (s"10" + s"5"))`
+@code`(5 + ("10" + "5"))`
+@code`((3 + 5) + ("10" + "5"))`
