@@ -1,0 +1,88 @@
+@syntax(sp){sp: /unit/ | /\(/ sp |  /\)/ sp | /\(/ | /\)/}
+
+@typing(t1){
+    ---
+    @G |- `@sp` : `unit`
+}
+
+expected_end(@s_1 | `@sp`)`
+if ("cnt" not in s_1[1]) or (s_1[1]["cnt"] != 1):
+    sp = list("(")
+else:
+    sp = list(")")
+`
+
+print_good(|)`
+print("TRUE")
+`
+
+@semantics(bad_end1){
+    expected_end(@s | `(`)
+    print_bad(|)
+    ---
+    <`)`, @s> => @s
+}
+
+@semantics(good_end){
+    expected_end(@s | `)`)
+    print_good(|)
+    ---
+    <`)`, @s> => @s
+}
+
+@semantics(bad_end2){
+    print_bad(|)
+    ---
+    <`(`, @s> => @s
+}
+
+incr_state(@s_1 | @s_2)`
+s_2 = s_1
+if "cnt" in s_1[1]:
+    s_2[1]["cnt"] = s_1[1]["cnt"] + 1
+else:
+    s_2[1]["cnt"] = 1
+`
+
+decr_state(@s_1 | @s_2)`
+s_2 = s_1
+if "cnt" in s_1[1]:
+    s_2[1]["cnt"] = s_1[1]["cnt"] - 1
+else:
+    s_2[1]["cnt"] = -1
+`
+
+dominant_bracket(@s_1 | `@sp`)`
+if ("cnt" not in s_1[1]) or (s_1[1]["cnt"] >= 0):
+    sp = list("(")
+else:
+    sp = list(")")
+`
+
+print_bad(|)`
+print("FALSE")
+`
+
+@semantics(bad_end3){
+    dominant_bracket(@s | `)`)
+    print_bad(|)
+    ---
+    <`@sp`, @s> => @s
+}
+
+@semantics(left_bracket){
+    incr_state(@s_1 | @s_2)
+    ---
+    <`(@sp`, @s_1> => <`@sp`, @s_2>
+}
+
+@semantics(right_bracket){
+    decr_state(@s_1 | @s_2)
+    ---
+    <`)@sp`, @s_1> => <`@sp`, @s_2>
+}
+
+@code`((()))`
+@code`())`
+@code`(()`
+@code`)(`

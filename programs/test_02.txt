@@ -6,21 +6,9 @@
     @G |- `@sp` : `unit`
 }
 
-{
-    @semantics(o1){
-        pred_print(`@string` |)
-        ---
-        <`print(@string)`, @s> => @s
-    }
-
-    pred_print(`@string_1` |)`
-print(string_1[0])
-    `
-
-    @code`print("printed in block")`
-}
-
-@syntax(sp){sp: /unit/ | /print/ "(" sp ")" | STR}
+pred_print(`@sp` |)`
+print("OUT: " + sp[0])
+`
 
 @semantics(o1){
     pred_print(`@sp` |)
@@ -28,8 +16,15 @@ print(string_1[0])
     <`print(@sp)`, @s> => @s
 }
 
-pred_print(`@sp` |)`
-print(sp[0])
-`
+{
+
+    pred_print(`@string_1` |)`
+print("IN: " + string_1[0])
+    `
+
+    @code`print("printed in block")`
+}
+
+@syntax(sp){sp: /unit/ | /print/ "(" sp ")" | STR}
 
 @code`print( "printed outside of block" )`
