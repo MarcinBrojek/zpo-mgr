@@ -41,7 +41,7 @@ class OptimusPirme(Transformer):
 
     def ap(self, c):
         id, i, input, output = c[0], 1, list(), list()
-        while (c[i] != "|" and i < len(c)): # TODO: is ok?
+        while (c[i] != "|" and i < len(c)):
             if c[i] is not None:
                 input.append(c[i])
             i += 1
@@ -54,7 +54,7 @@ class OptimusPirme(Transformer):
 
     def d(self, c):
         id, i, input, output = c[0], 1, list(), list()
-        while (c[i] != "|" and i < len(c) - 1): # TODO: is ok?
+        while (c[i] != "|" and i < len(c) - 1):
             if c[i] is not None:
                 input.append(c[i])
             i += 1

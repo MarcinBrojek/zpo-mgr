@@ -9,6 +9,12 @@ def translate_lst(base_parser, start, lst):
 
 
 def override_vars(c, unique_suf):
+    if isinstance(c, dict):
+        c_keys = override_vars(list(c.keys()), unique_suf)
+        c_values = override_vars(list(c.values()), unique_suf)
+        return dict(zip(c_keys, c_values))
+    if isinstance(c, tuple):
+        return tuple(override_vars(list(c), unique_suf))
     if isinstance(c, list):
         return [override_vars(el, unique_suf) for el in c]
     if isinstance(c, str):

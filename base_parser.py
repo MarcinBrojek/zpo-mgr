@@ -47,7 +47,7 @@ class BaseParser:
 
         tranformer_txt = self.base_tranformer_txt
         for ntm in known_ntm:
-            tranformer_txt += f"\n    def {ntm}(self, c):\n" + f"        res = [el if not isinstance(el, Token) else el.value for el in c]\n" + f"        return Var(res[0].ntm, res[0].id) if (len(res)) == 1 and isinstance(res[0], Var) and (res[0].to_correct == 1) else res\n"
+            tranformer_txt += f"\n    def {ntm}(self, c):\n" + f"        return (\"{ntm}\", Var(c[0].ntm, c[0].id) if (len(c) == 1) and isinstance(c[0], Var) and (c[0].to_correct == 1) else [el if not isinstance(el, Token) else el.value for el in c])\n"
             tranformer_txt += f"\n    def var{ntm}(self, c):\n" + f"        return Var(c[0], (c[1] or \"\")[1:], 1)\n" # c[1] can be None (id)
 
         with open("tmp_transformer.py", "w") as tmp_transformer_import:
