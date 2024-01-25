@@ -144,12 +144,23 @@ class Typing:
         )
 
 
+class Program:
+    def __init__(self, lst):
+        self.lst = lst
+
+    def __str__(self):
+        return str(self.lst)
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class Block:
     def __init__(self, p):
         self.p = p
 
     def __str__(self):
-        return "{\n" + str(self.p) + "\n}"
+        return "B-{\n" + str(self.p) + "\n}-B"
 
     def __repr__(self):
         return self.__str__()
@@ -225,3 +236,14 @@ class Rt:
             [el.override_vars(suf) for el in self.ut],
             self.ty.override_vars(suf)
         )
+
+
+class Code:
+    def __init__(self, rsp):
+        self.rsp = rsp
+
+    def __str__(self):
+        return "@code`" + str(self.rsp) + "`\n"
+
+    def __repr__(self):
+        return self.__str__() 
