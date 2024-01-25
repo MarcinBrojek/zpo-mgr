@@ -246,4 +246,7 @@ class Code:
         return "@code`" + str(self.rsp) + "`\n"
 
     def __repr__(self):
-        return self.__str__() 
+        return self.__str__()
+    
+    def translate(self, base_parser):
+        self.rsp = translate_c(base_parser, "sp", self.rsp)

@@ -5,12 +5,9 @@ BASE_GRAMMAR_PATH = Path(__file__).parent / "base_grammar.lark"
 BASE_TRANSFORMER_PATH = Path(__file__).parent / "base_transformer.txt"
 
 
-def my_import(name):
-    components = name.split(".")
-    mod = __import__(components[0])
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
+def import_class(mod, component):
+    mod = __import__(mod, fromlist=[None])
+    return getattr(mod, component)
 
 
 class BaseParser:
@@ -53,13 +50,14 @@ class BaseParser:
                 tranformer_txt += f"\n    def {ntm}(self, c):\n" + f"        return (\"{ntm}\", Var(c[0].ntm, c[0].id) if (len(c) == 1) and isinstance(c[0], Var) and (c[0].to_correct == 1) else [el if not isinstance(el, Token) else el.value for el in c])\n"
                 tranformer_txt += f"\n    def var{ntm}(self, c):\n" + f"        return Var(c[0], (c[1] or \"\")[1:], 1)\n" # c[1] can be None (id)
 
-            with open("tmp_transformer.py", "w") as tmp_transformer_import:
+            with open("tmp/tmp_transformer.py", "w") as tmp_transformer_import:
                 tmp_transformer_import.write(tranformer_txt)
+                tmp_transformer_import.close()
 
         # print("GRAMMAR", grammar_txt)
         # print(tranformer_txt)
         self.need_update = False
         tree = self.parser.parse(input_txt)
-        self.OptimusPirme = my_import("tmp_transformer.OptimusPirme")
+        self.OptimusPirme = import_class("tmp.tmp_transformer", "OptimusPirme")
 
         return self.OptimusPirme(visit_tokens=True).transform(tree)

@@ -3,6 +3,7 @@ from pathlib import Path
 from lark import Lark
 from transformer import OptimusPirme
 from interpreter import Interpreter
+from converter import gen_tex
 
 GRAMMAR_PATH = Path(__file__).parent / "grammar.lark"
 
@@ -23,6 +24,7 @@ def main(argv):
         interpreter.run(optimused_tree)
         # print(optimused_tree)
 
+        gen_tex(optimused_tree)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

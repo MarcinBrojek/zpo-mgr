@@ -34,7 +34,7 @@ class Interpreter:
         name = type(p).__name__
         self.base_parser.update_rs_all(self.state.envs[-1].rs_all.values())
 
-        if name in ["Ro", "Rt", "DefinePred"]:
+        if name in ["Ro", "Rt", "DefinePred", "Code"]:
             p.translate(self.base_parser)
 
         if name == "Program":
@@ -59,7 +59,7 @@ class Interpreter:
             self.state.envs[-1].d_all[p.id] = p
 
         elif name == "Code":
-            self.c = self.base_parser.run("sp", p.rsp)
+            self.c = p.rsp # sp after transtlate
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
             while prover.try_perform_any_transition():
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
