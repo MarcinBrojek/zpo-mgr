@@ -1,9 +1,12 @@
-# returns: translated rsp into sp (list of rsp into list of sp)
-def translate_c(base_parser, start, c):
-    if isinstance(c, str):
-        return base_parser.run(start, c)
+# returns: translated rsp into "sp" (list of rsp into list of "sp")
+def translate_c(base_parser, c):
+    if isinstance(c, str): # rsp or "named" raw string
+            start_py_pos = c.find("`")
+            if start_py_pos == -1: # rsp -> sp
+                return base_parser.run("sp", c)
+            return base_parser.run(c[:start_py_pos], c[(start_py_pos + 1):]) # raw ntm -> ntm
     if isinstance(c, list):
-        return [translate_c(base_parser, start, el) for el in c]
+        return [translate_c(base_parser, el) for el in c]
     return c
 
 
@@ -58,8 +61,8 @@ class ApplyPred:
         return self.__str__()
 
     def translate(self, base_parser):
-        self.input = translate_c(base_parser, "sp", self.input)
-        self.output = translate_c(base_parser, "sp", self.output)
+        self.input = translate_c(base_parser, self.input)
+        self.output = translate_c(base_parser, self.output)
 
     def override_vars(self, suf):
         return ApplyPred(
@@ -83,8 +86,8 @@ class DefinePred:
         return self.__str__()
 
     def translate(self, base_parser):
-        self.input = translate_c(base_parser, "sp", self.input)
-        self.output = translate_c(base_parser, "sp", self.output)
+        self.input = translate_c(base_parser, self.input)
+        self.output = translate_c(base_parser, self.output)
 
 
 class Transition:
@@ -105,9 +108,9 @@ class Transition:
         return self.__str__()
 
     def translate(self, base_parser):
-        self.c1 = translate_c(base_parser, "sp", self.c1)
+        self.c1 = translate_c(base_parser, self.c1)
         if not self.ending:
-            self.c2 = translate_c(base_parser, "sp", self.c2)
+            self.c2 = translate_c(base_parser, self.c2)
 
     def override_vars(self, suf):
         return Transition(
@@ -132,8 +135,8 @@ class Typing:
         return self.__str__()
 
     def translate(self, base_parser):
-        self.c1 = translate_c(base_parser, "sp", self.c1)
-        self.c2 = translate_c(base_parser, "sp", self.c2)
+        self.c1 = translate_c(base_parser, self.c1)
+        self.c2 = translate_c(base_parser, self.c2)
 
     def override_vars(self, suf):
         return Typing(
@@ -249,4 +252,4 @@ class Code:
         return self.__str__()
     
     def translate(self, base_parser):
-        self.rsp = translate_c(base_parser, "sp", self.rsp)
+        self.rsp = translate_c(base_parser, self.rsp)

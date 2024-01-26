@@ -7,7 +7,8 @@ ID  : /[a-zA-Z][\w\_]*/
 STR : ESCAPED_STRING
 I   : /\-[1-9]\d*/ | /0/ | /[1-9]\d*/
 
-rsp : PY
+rawnamed : /[a-zA-Z][\w\_]*`[^`]*`/
+rsp      : PY | rawnamed
 
 s   : /@s(\_\w+)?/
 g   : /@G(\_\w+)?/

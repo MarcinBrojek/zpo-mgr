@@ -11,7 +11,7 @@ TODO
 - [ ] Add mechanisms that can manipulate executing user's code, for e.x. exit program / subprogram.
 - [x] Optimize parser - make less times of recreating base_gramma and base_transformer.
 - [x] Make converter for rules to nice looking latech code.
-- [ ] Create a feature that allows parse code not only from base - sp(subprogram) - nonterminal.
+- [x] Create a feature that allows parse code not only from base - sp(subprogram) - nonterminal.
 - [ ] Complete `README`
 - [ ] Make `LICENSE` file
 
