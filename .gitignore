@@ -6,6 +6,3 @@ __pycache__/
 
 # venv
 myenv/
-
-# tmp
-tmp/
