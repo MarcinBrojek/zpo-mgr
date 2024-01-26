@@ -11,8 +11,7 @@ rsp : PY
 
 s   : /@s(\_\w+)?/
 g   : /@G(\_\w+)?/
-// t   : /@t(\_\w+)?/ | STR
-c   : rsp  | s       | g  // TODO: sP
+c   : rsp  | s       | g
 
 ap  : ID "(" [c] ("," c)* /\|/ [c] ("," c)* ")"
 d   : ID "(" [c] ("," c)* /\|/ [c] ("," c)* ")" PY

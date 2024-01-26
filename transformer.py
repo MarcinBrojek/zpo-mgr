@@ -5,10 +5,12 @@ from classes import (
     DefinePred,
     Transition,
     Typing,
+    Program,
     Block,
     Rs,
     Ro,
     Rt,
+    Code
 )
 
 
@@ -41,7 +43,7 @@ class OptimusPirme(Transformer):
 
     def ap(self, c):
         id, i, input, output = c[0], 1, list(), list()
-        while (c[i] != "|" and i < len(c)): # TODO: is ok?
+        while (c[i] != "|" and i < len(c)):
             if c[i] is not None:
                 input.append(c[i])
             i += 1
@@ -54,7 +56,7 @@ class OptimusPirme(Transformer):
 
     def d(self, c):
         id, i, input, output = c[0], 1, list(), list()
-        while (c[i] != "|" and i < len(c) - 1): # TODO: is ok?
+        while (c[i] != "|" and i < len(c) - 1):
             if c[i] is not None:
                 input.append(c[i])
             i += 1
@@ -90,16 +92,16 @@ class OptimusPirme(Transformer):
         return c
 
     def p(self, c):
-        return list(c)
+        return Program(list(c))
 
     def bp(self, c):
-        return Block(c)
+        return Block(c[0])
 
     def inneroption(self, c):
         return list(c)
 
     def code(self, c):
-        return c
+        return Code(c[0])
 
     def rs(self, c):
         name_id = c[0]

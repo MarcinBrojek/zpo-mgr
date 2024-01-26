@@ -1,11 +1,4 @@
 from base_parser import BaseParser
-from classes import (
-    DefinePred,
-    Block,
-    Rs,
-    Ro,
-    Rt,
-)
 from run import Prover
 
 
@@ -41,11 +34,11 @@ class Interpreter:
         name = type(p).__name__
         self.base_parser.update_rs_all(self.state.envs[-1].rs_all.values())
 
-        if name in ["Ro", "Rt", "DefinePred"]:
+        if name in ["Ro", "Rt", "DefinePred", "Code"]:
             p.translate(self.base_parser)
 
-        if name == "list":  # p
-            for sub_p in p:
+        if name == "Program":
+            for sub_p in p.lst:
                 self.run(sub_p)
 
         elif name == "Block":
@@ -65,9 +58,8 @@ class Interpreter:
         elif name == "DefinePred":
             self.state.envs[-1].d_all[p.id] = p
 
-        elif name == "str":  # rsp
-            i = 0
-            self.c = self.base_parser.run("sp", p)
+        elif name == "Code":
+            self.c = p.rsp # sp after transtlate
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
             while prover.try_perform_any_transition():
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")

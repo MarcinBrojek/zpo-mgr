@@ -1,0 +1,12 @@
+# Mac system files
+.DS_Store
+
+# cache
+__pycache__/
+
+# venv
+myenv/
+
+# tmp
+tmp/
+

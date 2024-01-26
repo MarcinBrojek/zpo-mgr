@@ -1,22 +1,23 @@
 from classes import Var, ApplyPred, Typing, Transition
 from copy import deepcopy
-# !for now: constrution is None / var / string / int / list / +-dict of constructions
+# !for now: constrution is None / var / string / int / list / tuple / dict of constructions
 
 
 # c - construction, m - maping for vars
 # returns: success?, new_c
 def try_update_constr(c, m):
-    if isinstance(c, dict):
-        if not c:
-            return True, dict()
-        b1, c_keys = zip(*[try_update_constr(el, m) for el in c.keys()])
-        b2, c_values = zip(*[try_update_constr(el, m) for el in c.keys()])
-        return (True, dict(list(zip(list(c_keys), list(c_values))))) if all(b1) and all(b2) else (False, None)
     if isinstance(c, list):
         if not c:
             return True, list()
         b, new_c = zip(*[try_update_constr(el, m) for el in c])
         return (True, list(new_c)) if all(b) else (False, None)
+    if isinstance(c, dict):
+        b1, c_keys = try_update_constr(list(c.keys()), m)
+        b2, c_values = try_update_constr(list(c.values()), m)
+        return (True, dict(zip(c_keys, c_values))) if b1 and b2 else (False, None)
+    if isinstance(c, tuple):
+        b, new_c = try_update_constr(list(c), m)
+        return (True, tuple(new_c)) if b else (False, None)
     if isinstance(c, Var):
         return (True, m[c]) if c in m else (False, None)
     if isinstance(c, str) or isinstance(c, int):
@@ -32,11 +33,12 @@ def try_unify_constrs(c1, c2):
     m = dict()
     # print(c1, type(c1), "<=>", c2, type(c2))
     if isinstance(c1, list) and isinstance(c2, list):
+        if len(c1) != len(c2):
+            return False, None
         if (not c1) and (not c2):
             return True, m
         b, m = zip(*[try_unify_constrs(e1, e2) for e1, e2 in zip(c1, c2)])
         if (not all(b)) or (len(c1) != len(c2)):
-            # print(c1, c2, len(c1), len(c2), "TU")
             return False, None
         m_or = dict()
         for m_e in m:
@@ -44,6 +46,12 @@ def try_unify_constrs(c1, c2):
                 return False, None
             m_or = m_or | m_e
         return True, m_or
+    if isinstance(c1, dict) and isinstance (c2, dict):
+        b1, m1 = try_unify_constrs(list(c1.keys()), list(c2.keys()))
+        b2, m2 = try_unify_constrs(list(c1.values()), list(c2.values()))
+        return (True, (m1 | m2)) if b1 and b2 and ((m1 | m2) == (m2 | m1)) else (False, None)
+    if isinstance(c1, tuple) and isinstance(c2, tuple):
+        return try_unify_constrs(list(c1), list(c2))
     if isinstance(c1, str) and isinstance(c2, str):
         return (c1 == c2), m
     if isinstance(c1, int) and isinstance(c2, int):
