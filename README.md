@@ -13,7 +13,7 @@ TODO
 - [x] Make converter for rules to nice looking latech code.
 - [x] Create a feature that allows parse code not only from base - sp(subprogram) - nonterminal.
 - [ ] Complete `README`
-- [ ] Make `LICENSE` file
+- [x] Make `LICENSE` file
 
 ## Technologies
 TODO
