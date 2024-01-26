@@ -1,0 +1,28 @@
+@syntax(sp){sp: /unit/ | /print/ "(" string ")"}
+@syntax(string){string: STR}
+
+@typing(t1){
+    ---
+    @G |- `@sp` : `unit`
+}
+
+pred_print(string`@string` |)`
+print("OUT: " + string[0])
+`
+
+@semantics(o1){
+    pred_print(string`@string` |)
+    ---
+    <`print(@string)`, @s> => @s
+}
+
+{
+
+    pred_print(string`@string` |)`
+print("IN: " + string[0])
+    `
+
+    @code`print("printed in block")`
+}
+
+@code`print( "printed outside of block" )`

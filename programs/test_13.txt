@@ -1,0 +1,118 @@
+@syntax(sp){sp: n | string | "(" sp "+" sp ")" | t}
+@syntax(t){t: /unit/ | /t_dot/}
+@syntax(n){n: I}
+@syntax(string){string: STR}
+
+@typing(t1){
+    ---
+    @G |- `@n` : `unit`
+}
+
+@typing(t2){
+    ---
+    @G |- `@string` : `unit`
+}
+
+@typing(t3){
+    ---
+    @G |- `(@n_1 + @n_2)` : t`t_dot`
+}
+
+@typing(t4){
+    ---
+    @G |- `(@string_1 + @string_2)` : t`t_dot`
+}
+
+@typing(t5){
+    @G |- `@sp_1` : t`t_dot`
+    ---
+    @G |- `(@sp_1 + @sp_2)` : t`t_dot`
+}
+
+@typing(t6){
+    @G |- `@sp_2` : t`t_dot`
+    ---
+    @G |- `(@sp_1 + @sp_2)` : t`t_dot`
+}
+
+@typing(t7){
+    @G |- `@sp` : t`t_dot`
+    ---
+    @G |- `@sp` : `unit`
+}
+
+
+@semantics(oe1){
+    <`@sp_1`, @s> => <`@sp_3`, @s>
+    ---
+    <`(@sp_1 + @sp_2)`, @s> => <`(@sp_3 + @sp_2)`, @s>
+}
+
+@semantics(oe2){
+    <`@sp_2`, @s> => <`@sp_3`, @s>
+    ---
+    <`(@sp_1 + @sp_2)`, @s> => <`(@sp_1 + @sp_3)`, @s>
+}
+
+string_to_string(string`@string_1`, string`@string_2` | string`@string_3`)`
+string_3 = list(["\"" + str(int(string_1[0][1:-1]) + int(string_2[0][1:-1])) + "\""])
+`
+
+string_to_int(string`@string_1`, string`@string_2` | n`@n_3`)`
+n_3 = list([int(string_1[0][1:-1]) + int(string_2[0][1:-1])])
+`
+
+int_to_string(n`@n_1`, n`@n_2` | string`@string_3`)`
+string_3 = list(["\"" + str((n_1[0] + n_2[0])) + "\""])
+`
+
+int_to_int(n`@n_1`, n`@n_2` | n`@n_3`)`
+n_3 = list([n_1[0] + n_2[0]])
+`
+
+@semantics(oe3){
+    string_to_string(string`@string_1`, string`@string_2` | string`@string_3`)
+    ---
+    <`(@string_1 + @string_2)`, @s> => <`@string_3`, @s>
+}
+
+@semantics(oe4){
+    string_to_int(string`@string_1`, string`@string_2` | n`@n_3`)
+    ---
+    <`(@string_1 + @string_2)`, @s> => <`@n_3`, @s>
+}
+
+@semantics(oe5){
+    int_to_string(n`@n_1`, n`@n_2` | string`@string_3`)
+    ---
+    <`(@n_1 + @n_2)`, @s> => <`@string_3`, @s>
+}
+
+@semantics(oe6){
+    int_to_int(n`@n_1`, n`@n_2` | n`@n_3`)
+    ---
+    <`(@n_1 + @n_2)`, @s> => <`@n_3`, @s>
+}
+
+s_end(@s_1, n`@n` | @s_2)`
+s_2 = n
+`
+
+s_end(@s_1, string`@string` | @s_2)`
+s_2 = string
+`
+
+@semantics(oe7){
+    s_end(@s_1, n`@n` | @s_2)
+    ---
+    <`@n`, @s_1> => @s_2
+}
+
+@semantics(oe8){
+    s_end(@s_1, string`@string` | @s_2)
+    ---
+    <`@string`, @s_1> => @s_2
+}
+
+@code`(5 + ("10" + "5"))`
+@code`((3 + 5) + ("10" + "5"))`

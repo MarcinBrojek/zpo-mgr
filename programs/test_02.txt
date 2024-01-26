@@ -18,8 +18,8 @@ print("OUT: " + sp[0])
 
 {
 
-    pred_print(`@string_1` |)`
-print("IN: " + string_1[0])
+    pred_print(`@string` |)`
+print("IN: " + string[0])
     `
 
     @code`print("printed in block")`
