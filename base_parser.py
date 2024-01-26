@@ -18,6 +18,7 @@ class BaseParser:
         self.base_tranformer_txt = open(tranformer_path).read()
         self.rs_all = list()
         self.need_update = True
+        self.start = str("# No start at the beggining")
 
     def update_rs_all(self, rs_all):
         if rs_all != self.rs_all:
@@ -43,8 +44,6 @@ class BaseParser:
                         rule_txt += el + " "
                 grammar_txt += f"%extend {rs.id}.{rs.number or 0} : " + rule_txt[2:] + "\n"
 
-            self.parser = Lark(grammar=grammar_txt, start=start, parser="earley")
-
             tranformer_txt = self.base_tranformer_txt
             for ntm in known_ntm:
                 tranformer_txt += f"\n    def {ntm}(self, c):\n" + f"        return (\"{ntm}\", Var(c[0].ntm, c[0].id) if (len(c) == 1) and isinstance(c[0], Var) and (c[0].to_correct == 1) else [el if not isinstance(el, Token) else el.value for el in c])\n"
@@ -54,9 +53,17 @@ class BaseParser:
                 tmp_transformer_import.write(tranformer_txt)
                 tmp_transformer_import.close()
 
+            self.grammar_txt = grammar_txt
+            self.parser = Lark(grammar=grammar_txt, start=start, parser="earley")
+
+        elif self.start != start:
+            self.parser = Lark(grammar=self.grammar_txt, start=start, parser="earley")
+
         # print("GRAMMAR", grammar_txt)
         # print(tranformer_txt)
         self.need_update = False
+        self.start = start
+        
         tree = self.parser.parse(input_txt)
         self.OptimusPirme = import_class("tmp.tmp_transformer", "OptimusPirme")
 

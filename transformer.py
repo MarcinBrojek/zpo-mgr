@@ -27,6 +27,9 @@ class OptimusPirme(Transformer):
     def I(self, c):
         return int(c)
 
+    def rawnamed(self, c):
+        return str(c[0])[:-1]
+
     def rsp(self, c):
         return str(c[0])
 
