@@ -1,4 +1,4 @@
-from classes import Var, ApplyPred, Typing, Transition
+from src.classes import Var, ApplyPred, Typing, Transition
 from copy import deepcopy
 # !for now: constrution is None / var / string / int / list / tuple / dict of constructions
 

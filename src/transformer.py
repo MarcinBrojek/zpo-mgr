@@ -1,5 +1,5 @@
 from lark import Transformer
-from classes import (
+from src.classes import (
     Var,
     ApplyPred,
     DefinePred,

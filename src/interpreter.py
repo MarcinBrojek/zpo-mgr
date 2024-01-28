@@ -1,5 +1,5 @@
-from base_parser import BaseParser
-from run import Prover
+from src.base_parser import BaseParser
+from src.run import Prover
 
 
 class IEnv:
