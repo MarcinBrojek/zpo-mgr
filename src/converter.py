@@ -38,10 +38,9 @@ def tex(c):
     
     elif name == "tuple": # (rule_name, c)
         for el in c:
-            txt += tmb("=")
+            txt += tmb(",")
             txt += tex(el)
-        # return tmb("(") + txt[7:] + tmb(")") # proper way
-        return tex(c[1])
+        return tmb("(") + txt[7:] + tmb(")") # TODO: nice looking if can be
     
     elif name == "dict":
         for el in c:
@@ -49,7 +48,7 @@ def tex(c):
             txt += tex(el)
             txt += tmb(":")
             txt += tex(c[el])
-        return tmb("${$") + txt[7:] + tmb("$}$") # TODO: repair 
+        return tmb(r'\{') + txt[7:] + tmb(r'\}')
 
     elif name == "Var":
         if c.ntm == "G":
@@ -114,6 +113,8 @@ def tex(c):
         return r'$' + str(c) + r'$'
 
     else: # str
+        if c is None:
+            return "None"
         return id(c)
 
 

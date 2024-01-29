@@ -66,11 +66,12 @@ def try_unify_constrs(c1, c2):
 
 class Prover:
 
-    def __init__(self, parser, env, program_state, c):
+    def __init__(self, parser, env, program_state, c, debugger):
         self.d_all, self.rt_all, self.ro_all = env.d_all, env.rt_all, env.ro_all
         self.unit = parser.run("sp", "unit")
         self.s = program_state
         self.c = c
+        self.debugger = debugger
 
     def try_perform_any_transition(self):
         if self.c is None:
@@ -180,7 +181,12 @@ class Prover:
         unique_suf += 1
         my_trs = trs.copy()
         current = my_trs.pop()
-        # print(" >" * unique_suf + f"DEBUG: top trs = {current}\n")
+
+        # DEBUG
+        if self.debugger.is_aborted():
+            return False
+        self.debugger.read_action(current, "transition")
+        # DEBUG
 
         if isinstance(current, ApplyPred):
             b, new_m = self.apply_pred(current, m)
@@ -213,6 +219,10 @@ class Prover:
         if not b:
             return False
         
+        # DEBUG - depth update
+        self.debugger.incr_action_depth()
+        # DEBUG
+
         for ro_id in self.ro_all:
             ro = self.ro_all[ro_id].override_vars(unique_suf)
             uo, tr = ro.uo, ro.tr
@@ -225,6 +235,17 @@ class Prover:
             
             last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)
             if last_s2c2:
+
+                # DEBUG - depth reset
+                self.debugger.decr_action_depth()
+                self.debugger.action_end()
+                # DEBUG
+
                 return last_s2c2
-            
+        
+        # DEBUG - depth reset
+        self.debugger.decr_action_depth()
+        self.debugger.action_end()
+        # DEBUG
+
         return False

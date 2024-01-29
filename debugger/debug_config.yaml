@@ -4,7 +4,7 @@ follow:
     program         : true  # (false / true)
     breakpoints     : false # (false / true)
     call            : false # (false / true)
-    transition      : false # (false / true)
+    transition      : true  # (false / true)
     typing          : false # (false / true)
 
 # you can specify which called id - string

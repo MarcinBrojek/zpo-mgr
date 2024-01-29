@@ -58,8 +58,8 @@ class Interpreter:
                 self.run(sub_p)
 
             # DEBUG - reset all action
-            self.debugger.action_all_end()
             self.debugger.decr_action_depth()
+            self.debugger.action_all_end()
             # DEBUG
 
         elif name == "Block":
@@ -81,9 +81,14 @@ class Interpreter:
 
         elif name == "Code":
             self.c = p.rsp # sp after transtlate
-            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c)
+            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
+            
             while prover.try_perform_any_transition():
+            # DEBUG - transition - reset all action
+                self.debugger.action_all_end()
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
+            self.debugger.action_all_end()
+            # DEBUG
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")
             self.program_state = prover.s

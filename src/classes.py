@@ -23,8 +23,8 @@ def override_vars(c, unique_suf):
     if isinstance(c, str):
         return c
     if isinstance(c, Var):
-        ntm = c.ntm + "#" + str(unique_suf)
-        var = c.id
+        ntm = c.ntm
+        var = c.id + "!" + str(unique_suf)
         return Var(ntm, var)
     return None
 
