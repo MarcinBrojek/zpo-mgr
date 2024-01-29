@@ -152,7 +152,7 @@ class Program:
         self.lst = lst
 
     def __str__(self):
-        return str(self.lst)
+        return str(self.lst) + "\n"
 
     def __repr__(self):
         return self.__str__()
@@ -246,7 +246,7 @@ class Code:
         self.rsp = rsp
 
     def __str__(self):
-        return "@code`" + str(self.rsp) + "`\n"
+        return ("@code`" + str(self.rsp) + "`\n")
 
     def __repr__(self):
         return self.__str__()

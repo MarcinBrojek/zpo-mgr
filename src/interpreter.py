@@ -1,5 +1,6 @@
 from src.base_parser import BaseParser
 from src.run import Prover
+from debugger.debugger import Debugger
 
 
 class IEnv:
@@ -25,21 +26,41 @@ class IState:
 
 
 class Interpreter:
-    def __init__(self, state=None, base_parser=None):
+    def __init__(self, state=None, base_parser=None, debugger=None):
         self.state = state or IState()
         self.c = None
         self.base_parser = base_parser or BaseParser()
+        self.debugger = debugger or Debugger(debug=False)
 
     def run(self, p):
         name = type(p).__name__
         self.base_parser.update_rs_all(self.state.envs[-1].rs_all.values())
 
+        # DEBUG - abort if
+        if self.debugger.is_aborted():
+            return
+        # DEBUG
+
         if name in ["Ro", "Rt", "DefinePred", "Code"]:
             p.translate(self.base_parser)
 
+        # DEBUG - print translated structure
+        if name != "Block":
+            self.debugger.read_action(p, "program")
+        # DEBUG
+
         if name == "Program":
+            # DEBUG - depth update
+            self.debugger.incr_action_depth()
+            # DEBUG
+
             for sub_p in p.lst:
                 self.run(sub_p)
+
+            # DEBUG - reset all action
+            self.debugger.action_all_end()
+            self.debugger.decr_action_depth()
+            # DEBUG
 
         elif name == "Block":
             self.state.envs.append(self.state.envs[-1].copy())
@@ -67,3 +88,7 @@ class Interpreter:
                 raise Exception("Stuck in sos")
             self.program_state = prover.s
 
+        # DEBUG - reset action
+        if name != "Block":
+            self.debugger.action_end()
+        # DEBUG

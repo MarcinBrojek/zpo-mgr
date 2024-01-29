@@ -1,4 +1,4 @@
-from pdflatex import PDFLaTeX
+from latex import build_pdf
 import os
 
 
@@ -117,14 +117,6 @@ def tex(c):
         return id(c)
 
 
-def tex_lst(lst):
-    txt = str()
-    for c in lst:
-        txt += tex(c)
-        txt += "\n"
-        txt += "~\\\\"
-
-
 def gen_tex(c):
     context = r'''\makeatletter
 \documentclass{article}
@@ -202,12 +194,9 @@ showstringspaces=false
 ''' + tex(c) + r'''
 \end{document}
 '''
-    with open("tmp/tmp_convert.tex", "w") as tmp_convert:
-        tmp_convert.write(context)
-        tmp_convert.close()
     
-    pdfl = PDFLaTeX.from_texfile("tmp/tmp_convert.tex")
     dirname = os.getcwd()
     os.chdir(os.path.join(dirname, "tmp"))
-    _ = pdfl.create_pdf(keep_pdf_file=True, keep_log_file=True)
+    pdf = build_pdf(context)
+    pdf.save_to("tmp_convert.pdf")
     os.chdir(dirname)
