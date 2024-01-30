@@ -79,7 +79,7 @@ def tex(c):
         return txt[5:]
     
     elif name == "Block":
-        return r'\begin{quote}' + tm(r'\{') + r'\\' + tex(c.p) + r'\\' + tm(r'\}') + r'\end{quote}'
+        return r'\begin{quote}' + tm(r'\{ \\') + tex(c.p) + tm(r'\\ \}') + r'\end{quote}'
     
     elif name == "Rs":
         for option in c.inneroptions:

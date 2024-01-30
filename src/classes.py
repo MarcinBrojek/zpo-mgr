@@ -165,7 +165,7 @@ class Block:
         self.p = p
 
     def __str__(self):
-        return "B-{\n" + str(self.p) + "\n}-B"
+        return "B\n" + str(self.p) + "\nB"
 
     def __repr__(self):
         return self.__str__()
