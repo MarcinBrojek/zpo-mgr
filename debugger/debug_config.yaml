@@ -2,6 +2,7 @@
 
 follow:
     program         : true  # (false / true)
+    config          : true  # (false / true)
     breakpoints     : false # (false / true)
     call            : false # (false / true)
     transition      : false # (false / true)

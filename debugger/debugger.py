@@ -42,6 +42,9 @@ class Debugger:
         win.move(y + 1, 0)
 
     def add_window_info(self, c):
+        if self.data["clear_window"] == True:
+            self.stdscr.clear()
+
         self.stdscr.addstr("\n")
         self.stdscr.addstr(f"--------------------------------------------------------------------------------\n")
         self.stdscr.addstr(f"                            DEBUG - {type(c).__name__} - depth({self.depth})\n")
@@ -77,10 +80,6 @@ class Debugger:
         if read:
             return
         
-        if self.data["clear_window"] == True:
-            self.stdscr.clear()
-            self.stdscr.refresh()
-
         self.add_window_info(c)
         depth = self.depth
 
@@ -88,9 +87,6 @@ class Debugger:
             key = self.stdscr.getch()
 
             if key == self.data["keys"]["refresh"]:
-                if self.data["clear_window"] == True:
-                    self.stdscr.clear()
-                    self.stdscr.refresh()
                 self.add_window_info(c)
 
             elif key == self.data["keys"]["print_pdf"]:

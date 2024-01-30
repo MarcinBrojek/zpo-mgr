@@ -90,6 +90,10 @@ class Interpreter:
 
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
             while prover.try_perform_any_transition():
+                # DEBUG
+                if self.debugger.debug and self.debugger.data["follow"]["config"]:
+                    self.debugger.read_action({"s": prover.s, "c": prover.c}, "config")
+                #DEBUG
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
 
             self.debugger.in_prove = False # DEBUG
