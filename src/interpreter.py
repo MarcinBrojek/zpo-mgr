@@ -36,9 +36,12 @@ class Interpreter:
         name = type(p).__name__
         self.base_parser.update_rs_all(self.state.envs[-1].rs_all.values())
 
-        # DEBUG - abort if
-        if self.debugger.is_aborted():
-            return
+        # DEBUG - before translate
+        if name != "Block":
+            self.debugger.try_skip_reset()
+            self.debugger.try_abort_reset()
+            if self.debugger.is_aborted():
+                return
         # DEBUG
 
         if name in ["Ro", "Rt", "DefinePred", "Code"]:
@@ -47,6 +50,8 @@ class Interpreter:
         # DEBUG - print translated structure
         if name != "Block":
             self.debugger.read_action(p, "program")
+            if self.debugger.is_aborted():
+                return
         # DEBUG
 
         if name == "Program":
@@ -59,7 +64,6 @@ class Interpreter:
 
             # DEBUG - reset all action
             self.debugger.decr_action_depth()
-            self.debugger.action_all_end()
             # DEBUG
 
         elif name == "Block":
@@ -81,19 +85,15 @@ class Interpreter:
 
         elif name == "Code":
             self.c = p.rsp # sp after transtlate
+
+            self.debugger.in_prove = True # DEBUG
+
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
-            
             while prover.try_perform_any_transition():
-            # DEBUG - transition - reset all action
-                self.debugger.action_all_end()
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
-            self.debugger.action_all_end()
-            # DEBUG
+
+            self.debugger.in_prove = False # DEBUG
+
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")
             self.program_state = prover.s
-
-        # DEBUG - reset action
-        if name != "Block":
-            self.debugger.action_end()
-        # DEBUG

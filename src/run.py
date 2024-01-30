@@ -77,14 +77,14 @@ class Prover:
         if self.c is None:
             return False
         for ro_id in self.ro_all:
-            ro = self.ro_all[ro_id]
+            ro = self.ro_all[ro_id].override_vars(0)
             b, m = try_unify_constrs([self.s, self.c], [ro.tr.s1, ro.tr.c1])
             # print("obecnie:", self.c)
-            # print("propozycja:", ro.tr.c1)
+            # print("propozycja:", ro.tr.c1, b)
             if not b:
                 continue
 
-            res = self.try_prove_transition([ro.tr], m)
+            res = self.try_prove_transition([ro.tr], m, 1)
             if res:
                 self.s, self.c = res # s2, c2
                 return True
@@ -182,10 +182,11 @@ class Prover:
         my_trs = trs.copy()
         current = my_trs.pop()
 
-        # DEBUG
+        # DEBUG - abort if, read action
         if self.debugger.is_aborted():
             return False
-        self.debugger.read_action(current, "transition")
+        if not isinstance(current, tuple):
+            self.debugger.read_action(current, "transition")
         # DEBUG
 
         if isinstance(current, ApplyPred):
@@ -206,6 +207,10 @@ class Prover:
             # check if used constr in prove is well typed (not in final state)
             if (c2 is not None) and (not self.try_prove_typing([Typing(s2[0], c2, ":", self.unit)], dict())):
                 return False
+            
+            # DEBUG - success on transition
+            self.debugger.decr_action_depth()
+            # DEBUG
 
             if not my_trs:
                 return (s2, c2)
@@ -219,7 +224,8 @@ class Prover:
         if not b:
             return False
         
-        # DEBUG - depth update
+        # DEBUG - depth - tmp save
+        debug_tmp_depth = self.debugger.depth
         self.debugger.incr_action_depth()
         # DEBUG
 
@@ -237,15 +243,13 @@ class Prover:
             if last_s2c2:
 
                 # DEBUG - depth reset
-                self.debugger.decr_action_depth()
-                self.debugger.action_end()
+                self.debugger.depth = debug_tmp_depth
                 # DEBUG
 
                 return last_s2c2
         
-        # DEBUG - depth reset
-        self.debugger.decr_action_depth()
-        self.debugger.action_end()
+        # DEBUG - action 
+        self.debugger.action_depth = debug_tmp_depth
         # DEBUG
 
         return False

@@ -4,7 +4,7 @@ follow:
     program         : true  # (false / true)
     breakpoints     : false # (false / true)
     call            : false # (false / true)
-    transition      : true  # (false / true)
+    transition      : false # (false / true)
     typing          : false # (false / true)
 
 # you can specify which called id - string
@@ -21,11 +21,14 @@ clear_window        : true # (false / true)
 convert_auto        : false # (false / true)
 
 # > each key is int that represents key from 'curses' package
-# > keys within group are unique, groups don't affect each other - exception: global (unique in all keys: global_skip, global_abort, print_pdf)
+# > keys within group are unique - exception -> unique in all keys: global_skip, global_abort, print_pdf, refresh)
 # - next  - debug next step
 # - skip  - skip debug for next step / whole 
 # - abort - abort executing next step / whole
 keys:
+    # refresh terminal show
+    refresh         : 114 # r
+
     # for action about transition / typing
     prove_next      : 261 # right arrow
     prove_skip      : 258 # down narrow
