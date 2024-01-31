@@ -1,12 +1,12 @@
 # Feel free to set the values as you want
 
 follow:
-    program         : false  # (false / true)
-    config          : true  # (false / true)
-    breakpoint      : true # (false / true)
-    # call            : false # (false / true)
-    transition      : false  # (false / true)
-    # typing          : false # (false / true)
+    program         : true  # (false / true)
+    config          : true   # (false / true)
+    breakpoint      : true   # (false / true)
+    # call            : false  # (false / true)
+    transition      : true  # (false / true)
+    typing          : true  # (false / true)
 
 # you can specify which called id - string
 # of (def and applyPred) predicate / (Ro) transition rule / (Rt) typing rule is followed

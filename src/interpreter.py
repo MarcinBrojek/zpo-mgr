@@ -104,8 +104,8 @@ class Interpreter:
                     
                 self.debugger.incr_action_depth() # DEBUG
 
-                b = prover.try_perform_any_transition() # is performed transition
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
+                b = prover.try_perform_any_transition() # is performed transition
 
                 self.debugger.decr_action_depth() # DEBUG
 
