@@ -23,9 +23,11 @@ def override_vars(c, unique_suf):
     if isinstance(c, str):
         return c
     if isinstance(c, Var):
-        ntm = c.ntm + "#" + str(unique_suf)
-        var = c.id
+        ntm = c.ntm
+        var = c.id + "!" + str(unique_suf)
         return Var(ntm, var)
+    if isinstance(c, int):
+        return c
     return None
 
 
@@ -152,7 +154,7 @@ class Program:
         self.lst = lst
 
     def __str__(self):
-        return str(self.lst)
+        return str(self.lst) + "\n"
 
     def __repr__(self):
         return self.__str__()
@@ -163,7 +165,7 @@ class Block:
         self.p = p
 
     def __str__(self):
-        return "B-{\n" + str(self.p) + "\n}-B"
+        return "B\n" + str(self.p) + "\nB"
 
     def __repr__(self):
         return self.__str__()
@@ -246,10 +248,21 @@ class Code:
         self.rsp = rsp
 
     def __str__(self):
-        return "@code`" + str(self.rsp) + "`\n"
+        return ("@code`" + str(self.rsp) + "`\n")
 
     def __repr__(self):
         return self.__str__()
     
     def translate(self, base_parser):
         self.rsp = translate_c(base_parser, self.rsp)
+
+
+class Breakpoint:
+    def __init__(self, id):
+        self.id = id
+    
+    def __str__(self):
+        return "!B_" + str(id)
+    
+    def __repr__(self):
+        return self.__str__()

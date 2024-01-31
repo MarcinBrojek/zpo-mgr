@@ -1,0 +1,70 @@
+@syntax(sp_next){sp: /unit/ | i}
+@syntax(i_next){i: I}
+
+@typing(t0_next){
+    ---
+    @G |- `@sp` : `unit`
+}
+
+@typing(t1_next){
+    ---
+    @G |- i`@i` : `unit`
+}
+
+@semantics(o0_next){
+    ---
+    <`@i`, @s> => <i`@i`, @s>
+}
+
+
+{
+    @b_1
+    @semantics(o1_abort){
+        ---
+        <i`1`, @s> => <i`1`, @s>
+    }
+    @code`1`
+}
+
+{
+    @semantics(o2_next){
+        ---
+        <i`1`, @s> => <i`2`, @s>
+    }
+
+    @semantics(o3_next){
+        ---
+        <i`2`, @s> => <i`3`, @s>
+    }
+
+    {
+        @semantics(o4_abort){
+            ---
+            <i`3`, @s> => <i`4`, @s>
+        }
+
+        @semantics(o5_next){
+            ---
+            <i`3`, @s> => <i`5`, @s>
+        }
+
+        @semantics(o6_next){
+            ---
+            <i`5`, @s> => @s
+        }
+
+        {
+            @b_2
+
+            {
+                @code`1`
+            }
+            
+            @code`2`
+        }
+    }
+}
+
+
+
+

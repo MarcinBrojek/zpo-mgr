@@ -1,4 +1,4 @@
-from pdflatex import PDFLaTeX
+from latex import build_pdf
 import os
 
 
@@ -38,10 +38,9 @@ def tex(c):
     
     elif name == "tuple": # (rule_name, c)
         for el in c:
-            txt += tmb("=")
+            txt += tmb(",")
             txt += tex(el)
-        # return tmb("(") + txt[7:] + tmb(")") # proper way
-        return tex(c[1])
+        return tmb("(") + txt[7:] + tmb(")") # TODO: nice looking if can be
     
     elif name == "dict":
         for el in c:
@@ -49,7 +48,7 @@ def tex(c):
             txt += tex(el)
             txt += tmb(":")
             txt += tex(c[el])
-        return tmb("${$") + txt[7:] + tmb("$}$") # TODO: repair 
+        return tmb(r'\{') + txt[7:] + tmb(r'\}')
 
     elif name == "Var":
         if c.ntm == "G":
@@ -80,7 +79,7 @@ def tex(c):
         return txt[5:]
     
     elif name == "Block":
-        return r'\begin{quote}' + tm(r'\{') + r'\\' + tex(c.p) + r'\\' + tm(r'\}') + r'\end{quote}'
+        return r'\begin{quote}' + tm(r'\{ \\') + tex(c.p) + tm(r'\\ \}') + r'\end{quote}'
     
     elif name == "Rs":
         for option in c.inneroptions:
@@ -114,15 +113,9 @@ def tex(c):
         return r'$' + str(c) + r'$'
 
     else: # str
+        if c is None:
+            return "None"
         return id(c)
-
-
-def tex_lst(lst):
-    txt = str()
-    for c in lst:
-        txt += tex(c)
-        txt += "\n"
-        txt += "~\\\\"
 
 
 def gen_tex(c):
@@ -202,12 +195,9 @@ showstringspaces=false
 ''' + tex(c) + r'''
 \end{document}
 '''
-    with open("tmp/tmp_convert.tex", "w") as tmp_convert:
-        tmp_convert.write(context)
-        tmp_convert.close()
     
-    pdfl = PDFLaTeX.from_texfile("tmp/tmp_convert.tex")
     dirname = os.getcwd()
     os.chdir(os.path.join(dirname, "tmp"))
-    _ = pdfl.create_pdf(keep_pdf_file=True, keep_log_file=True)
+    pdf = build_pdf(context)
+    pdf.save_to("tmp_convert.pdf")
     os.chdir(dirname)

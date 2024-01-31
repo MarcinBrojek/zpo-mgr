@@ -1,0 +1,52 @@
+# Feel free to set the values as you want
+
+follow:
+    program         : true  # (false / true)
+    config          : true   # (false / true)
+    breakpoint      : true   # (false / true)
+    # call            : false  # (false / true)
+    transition      : true  # (false / true)
+    typing          : true  # (false / true)
+
+# you can specify which called id - string
+# of (def and applyPred) predicate / (Ro) transition rule / (Rt) typing rule is followed
+call:
+    predicate       : []
+    transition      : []
+    typing          : []
+
+# when print to terminal, each moment cleae it
+clear_window        : true # (false / true)
+
+# make convert at each moment (tmp folder - reset each time)
+convert_auto        : false # (false / true)
+
+# > each key is int that represents key from 'curses' package
+# > keys within group are unique - exception -> unique in all keys: global_skip, global_abort, print_pdf, refresh)
+# - next  - debug next step
+# - skip  - skip debug for next step / whole 
+# - abort - abort executing next step / whole
+keys:
+    # refresh terminal show
+    refresh         : 114 # r
+
+    # for action about transition / typing, config
+    prove_next      : 261 # right arrow
+    prove_skip      : 258 # down narrow
+    prove_abort     : 259 # up arrow
+    prove_skip_all  : 115 # s
+    prove_abort_all : 97  # a
+
+    # for program (block), breakpoints, call follow
+    next            : 261 # right arrow
+    skip            : 258 # down narrow
+    abort           : 259 # up arrow
+    skip_all        : 115 # s
+    abort_all       : 97  # a
+
+    # effect on global program (main) :
+    global_skip     : 32  # space
+    global_abort    : 27  # esc
+
+    # convert construction into pdf
+    print_pdf       : 112 # p
