@@ -183,10 +183,14 @@ class Prover:
         current = my_trs.pop()
 
         # DEBUG - abort if, read action
-        if self.debugger.is_aborted():
-            return False
         if not isinstance(current, tuple):
+            self.debugger.try_skip_reset()
+            self.debugger.try_abort_reset()
+            if self.debugger.is_aborted():
+                return False
             self.debugger.read_action(current, "transition")
+            if self.debugger.is_aborted():
+                return False
         # DEBUG
 
         if isinstance(current, ApplyPred):
@@ -226,7 +230,6 @@ class Prover:
         
         # DEBUG - depth - tmp save
         debug_tmp_depth = self.debugger.depth
-        self.debugger.incr_action_depth()
         # DEBUG
 
         for ro_id in self.ro_all:
@@ -238,17 +241,21 @@ class Prover:
             if not b:
                 continue
             # print(f"DEBUG: udane unify:{m_tr}")
+
+            # DEBUG
+            self.debugger.depth = debug_tmp_depth + 1
+            # DEBUG
             
             last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)
             if last_s2c2:
 
-                # DEBUG - depth reset
-                self.debugger.depth = debug_tmp_depth
+                # DEBUG
+                self.debugger.action_depth = debug_tmp_depth
                 # DEBUG
 
                 return last_s2c2
         
-        # DEBUG - action 
+        # DEBUG
         self.debugger.action_depth = debug_tmp_depth
         # DEBUG
 

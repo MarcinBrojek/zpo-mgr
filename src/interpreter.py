@@ -87,15 +87,31 @@ class Interpreter:
             self.c = p.rsp # sp after transtlate
 
             self.debugger.in_prove = True # DEBUG
+            self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on program from transition
 
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
-            while prover.try_perform_any_transition():
+
+            b = True
+            while b:
                 # DEBUG
                 if self.debugger.debug and self.debugger.data["follow"]["config"]:
+                    self.debugger.try_abort_reset()
+                    self.debugger.try_skip_reset()
+                    if self.debugger.is_aborted():
+                        break
                     self.debugger.read_action({"s": prover.s, "c": prover.c}, "config")
-                #DEBUG
+                    if self.debugger.is_aborted():
+                        break
+                # DEBUG
+                    
+                self.debugger.incr_action_depth() # DEBUG
+
+                b = prover.try_perform_any_transition() # is performed transition
                 print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
 
+                self.debugger.decr_action_depth() # DEBUG
+
+            self.debugger.decr_action_depth() # DEBUG
             self.debugger.in_prove = False # DEBUG
 
             if prover.c is not None: # final state

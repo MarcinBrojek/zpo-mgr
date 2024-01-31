@@ -6,7 +6,7 @@ import yaml
 CONFIG_PATH = Path(__file__).parent / "debug_config.yaml"
 
 
-inf = 1000000
+inf = 1000000 # can be swaped to "real" inf - bigger number
 
 
 class Debugger:
@@ -20,6 +20,10 @@ class Debugger:
 
         # we store at skip / abort the depth of last used that action
         # if actual depth is >= skip /abort, we "perform" that stored action
+
+        # before new action there will be reset that restore inf
+        # value if its depth <= stored action like skip / abort
+
         self.skip = inf
         self.abort = inf 
 
