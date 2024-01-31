@@ -38,8 +38,7 @@ class Interpreter:
 
         # DEBUG - before translate
         if name != "Block":
-            self.debugger.try_skip_reset()
-            self.debugger.try_abort_reset()
+            self.debugger.try_reset()
             if self.debugger.is_aborted():
                 return
         # DEBUG
@@ -48,7 +47,7 @@ class Interpreter:
             p.translate(self.base_parser)
 
         # DEBUG - print translated structure
-        if name != "Block":
+        if name != "Block" and name != "Breakpoint":
             self.debugger.read_action(p, "program")
             if self.debugger.is_aborted():
                 return
@@ -95,13 +94,12 @@ class Interpreter:
             while b:
                 # DEBUG
                 if self.debugger.debug and self.debugger.data["follow"]["config"]:
-                    self.debugger.try_abort_reset()
-                    self.debugger.try_skip_reset()
+                    self.debugger.try_reset()
                     if self.debugger.is_aborted():
-                        break
+                        break # or maybe return?
                     self.debugger.read_action({"s": prover.s, "c": prover.c}, "config")
                     if self.debugger.is_aborted():
-                        break
+                        break # or maybe return?
                 # DEBUG
                     
                 self.debugger.incr_action_depth() # DEBUG
@@ -117,3 +115,10 @@ class Interpreter:
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")
             self.program_state = prover.s
+        
+        elif name == "Breakpoint":
+            # DEBUG
+            self.debugger.read_action("Breakpoint - id:" + p.id, "breakpoint")
+            if self.debugger.is_aborted():
+                return
+            # DEBUG

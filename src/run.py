@@ -184,8 +184,7 @@ class Prover:
 
         # DEBUG - abort if, read action
         if not isinstance(current, tuple):
-            self.debugger.try_skip_reset()
-            self.debugger.try_abort_reset()
+            self.debugger.try_reset()
             if self.debugger.is_aborted():
                 return False
             self.debugger.read_action(current, "transition")

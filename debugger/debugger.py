@@ -12,7 +12,7 @@ inf = 1000000 # can be swaped to "real" inf - bigger number
 class Debugger:
     def __init__(self, stdscr=None, debug=False, path=CONFIG_PATH):
 
-        self.depth = 0 # actual depth of action
+        self.depth = 0 # actual depth of action, even for empty debug
 
         # global action -> action_depth = -1
         # action_all -> action_depth = depth - 1
@@ -68,25 +68,20 @@ class Debugger:
     def is_aborted(self):
         return self.depth >= self.abort
     
-    def try_skip_reset(self):
+    def try_reset(self):
         if self.depth <= self.skip:
             self.skip = inf
-
-    def try_abort_reset(self):
         if self.depth <= self.abort:
             self.abort = inf
 
     def read_action(self, c, place):
-        if (not self.debug) or self.is_skipped() or self.is_aborted():
-            return
-        
-        read = not (self.data["follow"][place])
-        if read:
+        if (not self.debug) or (not self.data["follow"][place]) or self.is_skipped() or self.is_aborted():
             return
         
         self.add_window_info(c)
         depth = self.depth
 
+        read = False
         while(not read):
             key = self.stdscr.getch()
 

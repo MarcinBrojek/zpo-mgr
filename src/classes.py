@@ -255,3 +255,14 @@ class Code:
     
     def translate(self, base_parser):
         self.rsp = translate_c(base_parser, self.rsp)
+
+
+class Breakpoint:
+    def __init__(self, id):
+        self.id = id
+    
+    def __str__(self):
+        return "!B_" + str(id)
+    
+    def __repr__(self):
+        return self.__str__()

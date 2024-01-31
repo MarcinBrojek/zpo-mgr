@@ -25,7 +25,7 @@ REL : /:/ | /<:/
 ty  : g "|-" c REL c
 ut  : (ap | ty)*
 
-p  : (_r | d | bp | code)*
+p  : (_r | d | bp | code | b)*
 bp : "{" p "}"
 _r  : rs | ro | rt
 
@@ -35,3 +35,5 @@ code : "@code" rsp
 rs   : "@syntax" "(" ID ")" "{" ID ["."I] ":" inneroption ("|" inneroption)*"}"
 ro   : "@semantics" "(" ID ")" "{" uo "---" [tr | trend] "}"
 rt   : "@typing" "(" ID ")" "{" ut "---" ty "}"
+
+b    : /@b(\_\w+)?/ // breakpoint for DEBUG

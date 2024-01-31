@@ -10,7 +10,8 @@ from src.classes import (
     Rs,
     Ro,
     Rt,
-    Code
+    Code,
+    Breakpoint
 )
 
 
@@ -124,3 +125,7 @@ class OptimusPirme(Transformer):
         ut = c[1]
         ty = c[2]
         return Rt(name_id, ut, ty)
+    
+    def b(self, c):
+        id = None if "_" not in str(c[0]) else str(c[0][3:])
+        return Breakpoint(id)
