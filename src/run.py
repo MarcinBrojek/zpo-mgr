@@ -115,7 +115,9 @@ class Prover:
                 locals[var.ntm] = m[var]
             else:
                 locals[var.ntm + "_" + var.id] = m[var]
+        # print("<", locals)
         exec(d.code, {}, locals)
+        # print(">", locals)
         for local in locals:
             var = Var(local, None)
             pos_ = local.find("_")
@@ -138,14 +140,14 @@ class Prover:
         return True, (m_out | m_in)
 
     # tys - list of ty/ap to "prove", m - temporal maping, unique_suf - unique change of var names in rules
-    # returns: success?
+    # returns: last c2 from typing, so should be `unit` in try_prove_transition
     def try_prove_typing(self, tys, m, unique_suf=0): # expected: tys not empty
         unique_suf += 1
         my_tys = tys.copy()
         current = my_tys.pop()
-        
+
         # DEBUG
-        if not isinstance(current, bool):
+        if not isinstance(current, tuple):
             self.debugger.try_reset()
             if self.debugger.is_aborted():
                 return False
@@ -160,22 +162,31 @@ class Prover:
                 return False
             return self.try_prove_typing(my_tys, new_m, unique_suf)
         
-        if isinstance(current, bool): # end of typing rule
+        if isinstance(current, tuple): # (c2-unify, c2-known)
+            b, c2 = try_update_constr(current[1], m)
+            if not b:
+                return False
+            
+            b, m_tu = try_unify_constrs(c2, current[0])
+            if (not b) or ((m_tu | m) != (m | m_tu)):
+                return False
 
             # DEBUG - success on transition
             self.debugger.decr_action_depth()
             # DEBUG
 
             if not my_tys:
-                return True
-            return self.try_prove_typing(my_tys, m, unique_suf)
+                return c2
+            return self.try_prove_typing(my_tys, m | m_tu, unique_suf)
 
         # 0. update all c in current typing
         if not isinstance(current, Typing):
             return False
-        b, current_l = try_update_constr([current.g, current.c1, current.r, current.c2], m)
+        b, current_l = try_update_constr([current.g, current.c1, current.r], m)
         if not b:
             return False
+        
+        b1, current_l1 = try_update_constr([current.g, current.c1, current.r, current.c2], m)
         
         # DEBUG - depth - tmp save
         debug_tmp_depth = self.debugger.depth
@@ -186,21 +197,28 @@ class Prover:
             # 1a. set new vars in maybe matching rule
             rt = self.rt_all[rt_id].override_vars(unique_suf)
             ut, ty = rt.ut, rt.ty
-            # print(" :" * unique_suf + f"DEBUG: top tys = {rt.ty}\n")
-            
+            # 1b. try match with rule (ty), as much as it is possible
+
+            ty_l = list([ty.g, ty.c1, ty.r])
+            if b1:
+                current_l = current_l1
+                ty_l = [ty.g, ty.c1, ty.r, ty.c2]
+
+            b, m_ty = try_unify_constrs(current_l, ty_l)
+            if not b:
+                continue
+
             # DEBUG
             self.debugger.depth = debug_tmp_depth + 1
             # DEBUG
-
-            # 1b. try match with rule (ty)
-            b, m_ty = try_unify_constrs(current_l, [ty.g, ty.c1, ty.r, ty.c2])
-            if b and self.try_prove_typing(my_tys + [True] + ut[::-1], m | m_ty, unique_suf):
+            last_c2 = self.try_prove_typing(my_tys + [(current.c2, ty.c2)] + ut[::-1], m | m_ty, unique_suf)
+            if last_c2:
 
                 # DEBUG
                 self.debugger.depth = debug_tmp_depth
                 # DEBUG
 
-                return True
+                return last_c2
 
         # DEBUG
         self.debugger.depth = debug_tmp_depth
@@ -245,7 +263,7 @@ class Prover:
 
                 self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on transiotion from typing
 
-                well_typed = self.try_prove_typing([Typing(s2[0], c2, ":", self.unit)], dict())
+                well_typed = self.try_prove_typing([Typing(s2[0], c2, ":", self.unit)], dict(), unique_suf)
 
                 self.debugger.decr_action_depth() # DEBUG
 
