@@ -44,7 +44,7 @@ class Interpreter:
         # DEBUG
 
         if name in ["Ro", "Rt", "DefinePred", "Code"]:
-            p.translate(self.base_parser)
+            p.translate(self.base_parser) # should be moved?
 
         # DEBUG - print translated structure
         if name != "Block" and name != "Breakpoint":
