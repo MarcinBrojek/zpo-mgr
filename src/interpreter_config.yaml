@@ -1,0 +1,8 @@
+# Feel free to set the values as you want
+
+# start values for program state's components
+start_gamma: {}
+start_store: {}
+
+# set gamma and store at the beggining of each code to start values
+reset_program_state: true # (false / true)

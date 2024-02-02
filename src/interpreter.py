@@ -1,6 +1,12 @@
 from src.base_parser import BaseParser
 from src.run import Prover
 from debugger.debugger import Debugger
+from pathlib import Path
+import yaml
+from copy import deepcopy
+
+
+CONFIG_PATH = Path(__file__).parent / "interpreter_config.yaml"
 
 
 class IEnv:
@@ -20,17 +26,29 @@ class IEnv:
 
 
 class IState:
-    def __init__(self, envs=None, store=None, gamma=None):
+    def __init__(self, data=None, envs=None):
         self.envs = envs or list([IEnv()])
-        self.program_state = [store or dict(), gamma or dict()]
+        self.start_store = data["start_store"]
+        self.start_gamma = data["start_gamma"]
+        self.reset_program_state = data["reset_program_state"]
+        self.program_state = [deepcopy(self.start_store), deepcopy(self.start_gamma)]
+
+    def try_reset_program_state(self):
+        if self.reset_program_state:
+            self.program_state = [deepcopy(self.start_store), deepcopy(self.start_gamma)]
 
 
 class Interpreter:
-    def __init__(self, state=None, base_parser=None, debugger=None):
-        self.state = state or IState()
+    def __init__(self, state=None, base_parser=None, debugger=None, data=None, path=CONFIG_PATH):
         self.c = None
         self.base_parser = base_parser or BaseParser()
         self.debugger = debugger or Debugger(debug=False)
+
+        if data is None:
+            with open(path, "r") as file:
+                data = yaml.safe_load(file)
+
+        self.state = state or IState(data=data)
 
     def run(self, p):
         name = type(p).__name__
@@ -114,7 +132,9 @@ class Interpreter:
 
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")
-            self.program_state = prover.s
+            
+            self.state.program_state = prover.s
+            self.state.try_reset_program_state()
         
         elif name == "Breakpoint":
             # DEBUG

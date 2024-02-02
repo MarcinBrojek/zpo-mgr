@@ -1,21 +1,21 @@
 from pathlib import Path
 from lark import Lark
+import importlib
+
 
 BASE_GRAMMAR_PATH = Path(__file__).parent / "base_grammar.lark"
 BASE_TRANSFORMER_PATH = Path(__file__).parent / "base_transformer.txt"
-
-
-def import_class(mod, component):
-    mod = __import__(mod, fromlist=[None])
-    return getattr(mod, component)
 
 
 class BaseParser:
     def __init__(
         self, grammar_path=BASE_GRAMMAR_PATH, tranformer_path=BASE_TRANSFORMER_PATH
     ):
-        self.base_grammar_txt = open(grammar_path).read()
-        self.base_tranformer_txt = open(tranformer_path).read()
+        with open(grammar_path) as grammar_path_file, open(tranformer_path) as tranformer_path_file:
+            self.base_grammar_txt = grammar_path_file.read()
+            self.base_tranformer_txt = tranformer_path_file.read()
+            grammar_path_file.close()
+            tranformer_path_file.close()
         self.rs_all = list()
         self.need_update = True
         self.start = str("# No start at the beggining")
@@ -59,12 +59,11 @@ class BaseParser:
         elif self.start != start:
             self.parser = Lark(grammar=self.grammar_txt, start=start, parser="earley")
 
-        # print("GRAMMAR", grammar_txt)
-        # print(tranformer_txt)
         self.need_update = False
         self.start = start
         
         tree = self.parser.parse(input_txt)
-        self.OptimusPirme = import_class("tmp.tmp_transformer", "OptimusPirme")
+        transformer = importlib.import_module("tmp.tmp_transformer")
+        importlib.reload(transformer)
 
-        return self.OptimusPirme(visit_tokens=True).transform(tree)
+        return transformer.OptimusPirme(visit_tokens=True).transform(tree)

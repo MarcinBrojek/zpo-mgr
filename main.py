@@ -33,6 +33,7 @@ def main(stdscr=None, args=None):
 
         # gen_tex(optimused_tree)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("code_path", help="Code file with path")

@@ -10,7 +10,7 @@ inf = 1000000 # can be swaped to "real" inf - bigger number
 
 
 class Debugger:
-    def __init__(self, stdscr=None, debug=False, path=CONFIG_PATH):
+    def __init__(self, stdscr=None, debug=False, data=None, path=CONFIG_PATH):
 
         self.depth = 0 # actual depth of action, even for empty debug
 
@@ -34,11 +34,12 @@ class Debugger:
         self.debug = True
         self.stdscr = stdscr
         self.stdscr.scrollok(1)
-
-        with open(path, "r") as file:
-            data = yaml.safe_load(file)
-        self.data = data
         self.in_prove = False
+
+        if data is None:
+            with open(path, "r") as file:
+                data = yaml.safe_load(file)
+        self.data = data
 
     def addstr(win, text):
         y, x = win.getyx()
