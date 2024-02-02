@@ -13,6 +13,7 @@ TODO
 - [x] Make converter for rules to nice looking latech code.
 - [x] Create a feature that allows parse code not only from base - sp(subprogram) - nonterminal.
 - [x] Make `LICENSE` file
+- [x] Make auto-tests if possible - run_tests.py
 
 ## Todo list
 - [ ] Add type check at the beggining in sos
@@ -20,7 +21,6 @@ TODO
 - [ ] Add class - Configuration, for better explanation
 - [ ] Add class - Rule, for better explanation
 - [ ] Add exceptions for some situations
-- [ ] Make auto-tests if possible
 - [ ] Write up list of lackings for semantics
 - [ ] Reformat code + style
 - [ ] Make tutorial
