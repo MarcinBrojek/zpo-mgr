@@ -56,15 +56,3 @@ print("IN: " + string[0])
 ```
 3. Watch the resulsts of calling programs. (on your own)
 
-## Tasks list - todo: move to issues.
-
-- [ ] Add type check at the beggining in sos
-- [ ] Modify debug in transition and typing to show more steps
-- [ ] Add class - Configuration, for better explanation
-- [ ] Add class - Rule, for better explanation
-- [ ] Add exceptions for some situations
-- [ ] Write up list of lackings for semantics
-- [ ] Reformat code + style
-- [ ] Make tutorial
-- [ ] Complete `README`
-
