@@ -7,13 +7,6 @@ follow:
     transition      : true  # (false / true)
     typing          : true  # (false / true)
 
-# you can specify which called id - string
-# of (def and applyPred) predicate / (Ro) transition rule / (Rt) typing rule is followed
-call:
-    predicate       : []
-    transition      : []
-    typing          : []
-
 # when print to terminal, each moment cleae it
 clear_window        : true # (false / true)
 
