@@ -12,9 +12,10 @@ The project / interpreter was developed in the Python language and solely relies
 ## Short example of use.
 
 1. Design your language and use it - all in one file.
-<br>
 (The contents of the file: [test_02.txt](./programs/test_02.txt))
-```
+
+<pre>
+
 @syntax(sp){sp: /unit/ | /print/ "(" sp ")" | string}
 @syntax(string){string: STR}
 
@@ -46,7 +47,8 @@ print("IN: " + string[0])
 
 @code`print( "printed outside of block" )`
 
-```
+</pre>
+        
 2. Run [main.py](./main.py) with one argument - file from point 1.
 
 ```console
