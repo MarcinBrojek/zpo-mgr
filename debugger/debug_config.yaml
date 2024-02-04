@@ -2,10 +2,10 @@
 
 follow:
     program         : false  # (false / true)
-    config          : true   # (false / true)
-    breakpoint      : false   # (false / true)
+    config          : false   # (false / true)
+    breakpoint      : true   # (false / true)
     transition      : true  # (false / true)
-    typing          : true  # (false / true)
+    typing          : false  # (false / true)
 
 # when print to terminal, each moment cleae it
 clear_window        : true # (false / true)
