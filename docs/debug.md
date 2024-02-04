@@ -192,7 +192,7 @@ Consider the drawn tree; if we use `abort - all` at the b_1 vertex, then the ent
 
 ## Tree for modified example
 
-At this point, I will dare to draw the continuation of the tree, adding the remaining elements - the proof. They are always in the subtrees of the codes. Therefore, let's focus on the block where the codes are located. proofs for next steps are empty - we need only to check typings for them. ❗ Left son should be place on the right.
+At this point, I will dare to draw the continuation of the tree, adding the remaining elements - the proof. They are always in the subtrees of the codes. Therefore, let's focus on the block where the codes are located. proofs for next steps are empty - we need only to check typings for them. ❗ Left son should be placed on the right.
 
 ```mermaid
     graph TD;
@@ -283,4 +283,4 @@ At this point, I will dare to draw the continuation of the tree, adding the rema
 
 > If we allowed the creation of o4_abort, what would happen? <br>
 Of course, we want to avoid a dead-end in the small-step operational semantics, <br> so we will use `abort - normal` in the proof tree. <br><br>
-Try do it by yourself, set debug confing with true only for transition & breakpoint follow. `Abort-all` in b_1 and next in prove `abort - normal` with transition: 3 -> 4.
+Try do it by yourself, set debug config with true only for transition & breakpoint follow. `Abort-all` in b_1 and next in prove `abort - normal` with transition: 3 -> 4.
