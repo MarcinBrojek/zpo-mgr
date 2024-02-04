@@ -4,12 +4,13 @@
 .
 ├── LICENSE
 ├── README.md
-├── debugger
+├── debugger/
 │   ├── debug_config.yaml
 │   └── debugger.py
-├── docs
+├── docs/
 │   ├── config.md
 │   ├── debug.md
+│   ├── semantics/
 │   ├── semantics.md
 │   ├── structure.md
 │   └── tutorial.md
@@ -17,7 +18,7 @@
 ├── programs/
 ├── requirements.txt
 ├── run_tests.py
-├── src
+├── src/
 │   ├── base_grammar.lark
 │   ├── base_parser.py
 │   ├── base_transformer.txt
@@ -28,7 +29,7 @@
 │   ├── interpreter_config.yaml
 │   ├── run.py
 │   └── transformer.py
-└── tmp
+└── tmp/
 ```
 
 ## Description
@@ -40,6 +41,7 @@
 - ### [docs/](../docs)
     - [`config.md`](./config.md) : Describes configuration files and their usage
     - [`debug.md`](./debug.md) : Explains how to use debug mode and its features.
+    - [`semantics/`](./semantics/) : Screens for semantics.
     - [`semantics.md`](./semantics.md) : Semantics for the Tool.
     - [`structure.md`](./structure.md) : This file - structure of the project.
     - [`tutorial.md`](./tutorial.md) : Showcases tool usage with examples.
