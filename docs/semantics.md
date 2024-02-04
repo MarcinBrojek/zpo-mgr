@@ -7,22 +7,25 @@ Upload date of [semantics](./semantics/) - 04/02/2024 ❕ all visible screens ma
 
 ## Syntax description
 
-<div style="display: flex; width: 100%;">
-  <a href="ścieżka/do/obrazu2.jpg" target="_blank", style="margin: 2px; height: 100%;">
-    <img src="./semantics/syntax_base.png" alt="Opis Obrazka 2" style="width: 100%; height: auto;" />
-  </a>
-  <a href="ścieżka/do/obrazu3.jpg" target="_blank", style="margin: 2px; height: 100%;">
-    <img src="./semantics/syntax_base_sp.png" alt="Opis Obrazka 3" style="width: 100%; height: auto;" />
-  </a>
-  <a href="ścieżka/do/obrazu3.jpg" target="_blank", style="margin: 2px; height: 100%;">
-    <img src="./semantics/syntax_contruction.png" alt="Opis Obrazka 3" style="width: 100%; height: auto;" />
-  </a>
-  <a href="ścieżka/do/obrazu3.jpg" target="_blank", style="margin: 2px; height: 100%;">
-    <img src="./semantics/syntax_tr_ty.png" alt="Opis Obrazka 3" style="width: 100%; height: auto;" />
-  </a>
-</div>
+Base | Construction | Unprocessed contruction
+:-:|:-:|:-:
+![](./semantics/syntax_base.png) | ![](./semantics/syntax_contruction.png) | ![](./semantics/syntax_base_sp.png)
 
-## Semantics descreiption
+Apply & Def Predicate | Transition & Typing | Program
+:-:|:-:|:-:
+![](./semantics/syntax_ap_d.png) | ![](./semantics/syntax_tr_ty.png) | ![](./semantics/syntax_program.png)
+
+## Semantics elements
+
+State, Configuration, Environments | Syntax Environment | Operational Semantics Environment
+:-:|:-:|:-:
+![](./semantics/sem_info.png) | ![](./semantics/sem_info_s.png) | ![](./semantics/sem_info_o.png)
+
+Typing Environment | Predicate Environment | Predefined predicates
+:-:|:-:|:-:
+![](./semantics/sem_info_t.png) | ![](./semantics/sem_info_d.png) | ![](./semantics/sem_info_predef.png)
+
+## Semantics description
 
 TODO
 
