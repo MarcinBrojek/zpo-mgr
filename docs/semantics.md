@@ -27,7 +27,45 @@ Typing Environment | Predicate Environment | Predefined predicates
 
 ## Semantics description
 
-TODO
+Parse transition rule | Parse upper part transition rule | Parse transition | Parse transition end
+:-:|:-:|:-:|:-:|
+![](./semantics/P-RO.png) | ![](./semantics/P-uo12.png) | ![](./semantics/P-tr.png) | ![](./semantics/P-trend.png)
+
+Parse typing rule | Parse upper part typing rule | Parse typing
+:-:|:-:|:-:|
+![](./semantics/P-RT.png) | ![](./semantics/P-ut12.png) | ![](./semantics/P-ty.png)
+
+Parse predicate definition | Parse construction list | Parse construction | Parse apply predicate
+:-:|:-:|:-:|:-:|
+![](./semantics/P-d.png) | ![](./semantics/P-cl.png) | ![](./semantics/P-c.png) | ![](./semantics/P-ap.png)
+
+Two programs | Two programs, one program end
+:-:|:-:|
+![](./semantics/SR-P1P2.png) | ![](./semantics/SR-P1P2end.png)
+
+Syntax rule | Semantics rule | Typing rule | Definition (predicate)
+:-:|:-:|:-:|:-:|
+![](./semantics/SR-RS.png) | ![](./semantics/SR-RO.png) | ![](./semantics/SR-RT.png) | ![](./semantics/SR-D.png)
+
+Block | Block end
+:-:|:-:|
+![](./semantics/SR-{P}.png) | ![](./semantics/SR-popEnv.png)
+
+Raw subprogram | Subprogram | Subprogram end | Prove predicate
+:-:|:-:|:-:|:-:|
+![](./semantics/SR-rsP.png) | ![](./semantics/SR-sP.png) | ![](./semantics/SR-sPend.png) | ![](./semantics/O-sP-ap.png)
+
+Prove upper part rule transition | Prove upper part rule transition - single | Prove empty upper part rule transition
+:-:|:-:|:-:|
+![](./semantics/O-sP-uo12.png) | ![](./semantics/O-sP-uo.png) | ![](./semantics/O-sP.png) | ![](./semantics/O-sP-ap.png)
+
+Prove upper part rule transition end | Prove upper part rule transition - single end | Prove empty upper part rule transition end
+:-:|:-:|:-:|
+![](./semantics/O-sP-uo12end.png) | ![](./semantics/O-sP-uoend.png) | ![](./semantics/O-sPend.png) | ![](./semantics/O-sP-ap.png)
+
+Prove upper part rule typing | Prove upper part rule typing - single | Prove empty upper part rule typing
+:-:|:-:|:-:|
+![](./semantics/T-sP-ut12.png) | ![](./semantics/T-sP-ut.png) | ![](./semantics/T-sP.png)
 
 ## Discrepancies in Semantics Compared to the Actual Behavior of the Tool
 
