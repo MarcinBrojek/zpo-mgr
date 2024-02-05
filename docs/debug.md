@@ -284,3 +284,9 @@ At this point, I will dare to draw the continuation of the tree, adding the rema
 > If we allowed the creation of o4_abort, what would happen? <br>
 Of course, we want to avoid a dead-end in the small-step operational semantics, <br> so we will use `abort - normal` in the proof tree. <br><br>
 Try do it by yourself, set debug config with true only for transition & breakpoint follow. `Abort-all` in b_1 and next in prove `abort - normal` with transition: 3 -> 4.
+
+## Run debug mode
+Run program with debug mode: (here [test_06.txt](../programs/test_06.txt))
+```console
+> python main.py programs/test_06.txt --debug
+```

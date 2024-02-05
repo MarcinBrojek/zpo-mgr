@@ -226,6 +226,18 @@ class Prover:
 
         return False            
 
+    # helper wrapper to call try_prove_typing
+    # s - given program state, c - given construction to check is well typed, unique_suf - unique change of var names in rules
+    # return: is c is well typed in s?
+    def try_typing(self, s, c, unique_suf=0):
+        self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on transiotion from typing
+
+        b = self.try_prove_typing([Typing(s[0], c, ":", self.unit)], dict(), unique_suf)
+
+        self.debugger.decr_action_depth() # DEBUG
+
+        return b
+
     # trs - list of tuple/tr/ap to "prove", m - maping, unique_suf - unique change of var names in rules
     # returns: last (s2, c2) from single small step
     def try_prove_transition(self, trs, m, unique_suf=0): # expected: trs not empty
@@ -259,16 +271,8 @@ class Prover:
                 return False
             
             # check if used constr in prove is well typed (not in final state)
-            if c2 is not None:
-
-                self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on transiotion from typing
-
-                well_typed = self.try_prove_typing([Typing(s2[0], c2, ":", self.unit)], dict(), unique_suf)
-
-                self.debugger.decr_action_depth() # DEBUG
-
-                if not well_typed:
-                    return False
+            if (c2 is not None) and (not self.try_typing(s2, c2, unique_suf)):
+                return False
             
             # DEBUG - success on transition
             self.debugger.decr_action_depth()
