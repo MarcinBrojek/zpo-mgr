@@ -79,21 +79,23 @@ The content of the example:
 In the program, we will distinguish between two types of elements: program and proof.
 
 ### Program elements:
-- **program**, the main entity,
+- **program**, the main entity, *+1 to depth for body*
 - **block**, which technically is a program,
 - **syntax rule**,
 - **small-step operational semantics rule**,
 - **typing rule**,
 - **predicate definition**,
-- **code**,
+- **code**, *+1 to depth for body*
 - **breakpoint**, which is processed only during debugging.
 
 ### Proof elements:
+- **semantics rule**, *+1 to depth for upper part of rule*
 - **transition**,
+- **typing rule**, *+1 to depth for upper part of rule*
 - **typing**,
 - **apply predicate**.
 
-Elements of proof are individual components from the upper parts of the semantics and typing rules.
+Elements of proof: **transition**, **typing** and **apply predicate** are individual components from the upper parts of the **semantics** and **typing rules**.
 
 As we can infer, the program from the input can be represented as a tree of program and proof elements. First, let's consider debugger operations on program elements, and then on the proof.
 
@@ -192,7 +194,7 @@ Consider the drawn tree; if we use `abort - all` at the b_1 vertex, then the ent
 
 ## Tree for modified example
 
-At this point, I will dare to draw the continuation of the tree, adding the remaining elements - the proof. They are always in the subtrees of the codes. Therefore, let's focus on the block where the codes are located. proofs for next steps are empty - we need only to check typings for them. ❗ Left son should be placed on the right.
+At this point, I will dare to draw the continuation of the tree, adding the remaining elements - the proof. They are always in the subtrees of the codes. Therefore, let's focus on the block where the codes are located. Proofs for next steps are empty - we need only to check typings for them. ❗ Left son should be placed on the right.
 
 ```mermaid
     graph TD;

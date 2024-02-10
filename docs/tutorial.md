@@ -134,7 +134,7 @@ An example rule looks like:
 
 And it originated from the following form:
 <pre>
-@semantics(oe3){
+@typing(< rule name >){
     < typing 1 / apply predicate 1 >
     ...
     < typing n / apply predicate n >
@@ -145,7 +145,7 @@ And it originated from the following form:
 
 where the typing has forms:
 <pre>
-'<' < Gamma > |- < construction 1 > < rel > < construction 2 > '>'
+< Gamma > |- < construction 1 > < rel > < construction 2 >
 </pre>
 
 Typing is an important aspect of a programming language and here is checked for every encountered syntactic construction. This is done by checking whether a given construction is of type \`unit\`. The example presented above states that from any context, we know that any non-terminal `e` is of type 'unit'.
