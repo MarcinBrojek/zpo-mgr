@@ -101,14 +101,20 @@ class Interpreter:
             self.state.envs[-1].d_all[p.id] = p
 
         elif name == "Code":
-            self.c = p.rsp # sp after transtlate
+            self.c = p.rsp # sp, after transtlate
 
             self.debugger.in_prove = True # DEBUG
             self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on program from transition
 
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
 
-            b = True
+            # check typing before everything
+            s, c = deepcopy(prover.s), deepcopy(prover.c)
+            b = prover.try_typing(s, c)
+            if not b:
+                raise Exception("Bad typing for code at the start")
+
+            # perform sos
             while b:
                 # DEBUG
                 if self.debugger.debug and self.debugger.data["follow"]["config"]:
