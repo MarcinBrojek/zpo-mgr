@@ -76,18 +76,12 @@ class Prover:
     def try_perform_any_transition(self):
         if self.c is None:
             return False
-        for ro_id in self.ro_all:
-            ro = self.ro_all[ro_id].override_vars(0)
-            b, m = try_unify_constrs([self.s, self.c], [ro.tr.s1, ro.tr.c1])
-            # print("obecnie:", self.c)
-            # print("propozycja:", ro.tr.c1, b)
-            if not b:
-                continue
-
-            res = self.try_prove_transition([ro.tr], m, 1)
-            if res:
-                self.s, self.c = res # s2, c2
-                return True
+        
+        tr = Transition(self.s, Var("s", 2), self.c, Var("c", 2)).override_vars(0)
+        res = self.try_prove_transition([tr], dict(), 1)
+        if res:
+            self.s, self.c = res # s2, c2
+            return True
         return False
 
     # ap - apply predicate, m_in - maping for ap.input

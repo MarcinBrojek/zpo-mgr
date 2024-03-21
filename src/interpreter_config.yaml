@@ -5,4 +5,4 @@ start_gamma: {}
 start_store: {}
 
 # set gamma and store at the beggining of each code to start values
-reset_program_state: true # (false / true)
+reset_program_state: false # (false / true)
