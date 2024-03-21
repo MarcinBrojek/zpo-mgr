@@ -1,0 +1,179 @@
+@syntax(syntax_program){sp: transition | accept | query | /unit/}
+@syntax(syntax_transition){transition: /\+/ state "-" letter "-" state}
+@syntax(syntax_run){query: /\?/ state text}
+@syntax(syntax_accept){accept: /A/ state}
+
+@syntax(syntax_iterate){iterate: text n}
+@syntax(syntax_fire){fire: text n}
+
+@syntax(syntax_state){state: ID}
+@syntax(syntax_letter){letter: STR}
+@syntax(syntax_text){text: STR}
+@syntax(syntax_n){n: I}
+
+incr(n`@n` | n`@n_1`)`
+n_1 = [n[0] + 1]
+`
+
+add_transition(@s_1, `+ @state_1 - @letter - @state_2` | @s_2)`
+s_2 = s_1
+if "transitions" in s_2[1]:
+    s_2[1]["transitions"].append((state_1[0], letter[0].strip('"\''), state_2[0]))
+else:
+    s_2[1]["transitions"] = list([(state_1[0], letter[0].strip('"\''), state_2[0])])
+`
+
+add_accept_state(@s_1, state`@state` | @s_2)`
+s_2 = s_1
+if "accept_states" in s_2[1]:
+    s_2[1]["accept_states"].append(state[0])
+else:
+    s_2[1]["accept_states"] = list([state[0]])
+`
+
+nonzero(n`@n` | n`@n_1`)`
+n_1 = [1 if n[0] != 0 else 0]
+`
+
+@semantics(transition){
+    add_transition(@s_1, `+ @state_1 - @letter - @state_2` | @s_2)
+    ---
+    <`+ @state_1 - @letter - @state_2`, @s_1> => @s_2
+}
+
+@semantics(accept){
+    add_accept_state(@s_1, state`@state` | @s_2)
+    ---
+    <`A @state`, @s_1> => @s_2
+}
+
+get_transition(@s, n`@n` | `+ @state_1 - @letter - @state_2`)`
+state_1 = [s[1]["transitions"][n[0] - 1][0]]
+letter = [s[1]["transitions"][n[0] - 1][1]]
+state_2 = [s[1]["transitions"][n[0] - 1][2]]
+`
+
+set_current_state(@s_1, state`@state` | @s_2)`
+s_2 = s_1
+s_2[1]["current_state"] = state[0]
+if "transitions" in s_2[1]:
+    s_2[0] = len(s_2[1]["transitions"])
+else:
+    s_2[0] = 0
+`
+
+get_current_state(@s | state`@state`)`
+state = [s[1]["current_state"]]
+`
+
+state_accept(@s, state`@state` | n`@n`)`
+if "accept_states" in s[1]:
+    n = [1 if state[0] in s[1]["accept_states"] else 0]
+else:
+    n = 0
+`
+
+@semantics(query){
+    set_current_state(@s_1, state`@state` | @s_2)
+    ---
+    <`? @state @text`, @s_1> => <iterate`@text 0`, @s_2>
+}
+
+true_end(|)`
+print("Query termninated!\n")
+`
+
+false_end(|)`
+print("Not this time :(\n")
+`
+
+empty_text(text`@text` | n`@n`)`
+n = [1 if len(text[0].strip('"\'')) == 0 else 0]
+`
+
+@semantics(true_end){
+    empty_text(text`@text` | n`1`)
+    get_current_state(@s | state`@state`)
+    state_accept(@s, state`@state` | n`1`)
+    true_end(|)
+    ---
+    <iterate`@text 0`, @s> => @s
+}
+
+@semantics(false_end){
+    empty_text(text`@text` | n`1`)
+    get_current_state(@s | state`@state`)
+    state_accept(@s, state`@state` | n`0`)
+    false_end(|)
+    ---
+    <iterate`@text 0`, @s> => @s
+}
+
+get_first_letter(text`@text` | letter`@letter`)`
+letter = [text[0].strip('"\'')[0]]
+`
+
+remove_first_letter(text`@text_1` | text`@text_2`)`
+text_2 = [text_1[0].strip('"\'')[1:]]
+`
+
+@semantics(sem_fire){
+    nonzero(n`@n` | n`1`)
+    empty_text(text`@text` | n`0`)
+    get_current_state(@s_1 | state`@state`)
+    get_first_letter(text`@text` | letter`@letter`)
+    get_transition(@s_1, n`@n` | `+ @state - @letter - @state_2`)
+    set_current_state(@s_1, state`@state_2` | @s_2)
+    remove_first_letter(text`@text` | text`@text_2`)
+    ---
+    <iterate`@text @n`, @s_1> => <iterate`@text_2 0`, @s_2>
+}
+
+@semantics(next_iterate){
+    incr(n`@n` | n`@n_1`)
+    ---
+    <iterate`@text @n`, @s> => <iterate`@text @n_1`, @s>
+}
+
+letter_size_one(letter`@letter` | n`@n`)`
+n = [1 if len(letter[0].strip('"\'')) == 1 else 0]
+`
+
+get_transitions_len(@G | n`@n`)`
+n = [G]
+`
+
+@typing(transition){
+    letter_size_one(letter`@letter` | n`1`)
+    ---
+    @G |- `+ @state_1 - @letter - @state_2` : `unit`
+}
+
+@typing(accept){
+    ---
+    @G |- `A @state` : `unit`  
+}
+
+@typing(query){
+    ---
+    @G |- `? @state @text` : `unit`  
+}
+
+lesseq(n`@n_1`, n`@n_2`| n`@n`)`
+n = [1 if n_1[0] <= n_2[0] else 0]
+`
+
+@typing(iterate){
+    get_transitions_len(@G | n`@n_2`)
+    lesseq(n`@n_1`, n`@n_2`| n`1`)
+    ---
+    @G |- iterate`@text @n_1` : `unit`  
+}
+
+@code`+ a - "1" - b`
+@code`+ c - "1" - a`
+@code`+ a - "0" - c`
+@code`A a`
+@code`? a "011"`
+@code`? a ""`
+@code`? c "10"`
