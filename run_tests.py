@@ -2,6 +2,8 @@ from pathlib import Path
 from lark import Lark
 from src.interpreter import Interpreter
 from src.transformer import OptimusPirme
+from io import StringIO
+import sys
 
 
 GRAMMAR_PATH = Path(__file__).parent / "src/grammar.lark"
@@ -23,22 +25,42 @@ TESTS = [
 ]
 
 
+# https://stackoverflow.com/questions/16571150/how-to-capture-stdout-output-from-a-python-function-call
+class Capturing(list):
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue())
+        del self._stringio
+        sys.stdout = self._stdout
+
+
 def main():
-    for test in TESTS:
-        test_name, data = test["name"], test["data"]
-        test_path = Path(__file__).parent / "programs" / test_name
-        with open(GRAMMAR_PATH, "r") as grammar_file, open(test_path, "r") as input_code_file:
+    try:
+        for test in TESTS:
+            test_name, data = test["name"], test["data"]
+            test_path = Path(__file__).parent / "programs" / test_name
+            with open(GRAMMAR_PATH, "r") as grammar_file, open(test_path, "r") as input_code_file, Capturing() as output:
 
-            grammar_text = grammar_file.read()
-            input_code = input_code_file.read()
-            parser = Lark(grammar=grammar_text, start="p", parser="earley")
+                grammar_text = grammar_file.read()
+                input_code = input_code_file.read()
+                parser = Lark(grammar=grammar_text, start="p", parser="earley")
 
-            tree = parser.parse(input_code)
-            optimused_tree = OptimusPirme().transform(tree)
-            Interpreter(data=data).run(optimused_tree)
+                tree = parser.parse(input_code)
+                optimused_tree = OptimusPirme().transform(tree)
+                Interpreter(data=data).run(optimused_tree)
 
-            grammar_file.close()
-            input_code_file.close()
+                grammar_file.close()
+                input_code_file.close()
+
+    except Exception as e:
+        output = ''.join(output)
+        print(output) # output contain last output
+        raise e
+
+    print("tests passed!")
 
 
 if __name__ == "__main__":

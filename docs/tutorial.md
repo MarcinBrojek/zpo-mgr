@@ -328,5 +328,3 @@ constr: ('sp', [('e', ['0'])])
 
 state: [{}, 3], 
 constr: None
-
-😱 You probably noticed that in the example, instead of modifying the store, there is a modification of Gamma in the 'update' predicate. Fortunately, Gamma is only used here as a substitute for the store and does not affect typing. If you are ready for other examples, take a look at the directory [programs](../programs/).
