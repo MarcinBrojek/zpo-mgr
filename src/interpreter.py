@@ -108,12 +108,7 @@ class Interpreter:
 
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
 
-            # check typing before everything
-            s, c = deepcopy(prover.s), deepcopy(prover.c)
-            b = prover.try_typing(s, c)
-            if not b:
-                raise Exception("Bad typing for code at the start")
-
+            b = True
             # perform sos
             while b:
                 # DEBUG

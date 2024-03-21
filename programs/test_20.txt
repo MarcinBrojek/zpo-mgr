@@ -175,5 +175,5 @@ n = [1 if n_1[0] <= n_2[0] else 0]
 @code`+ a - "0" - c`
 @code`A a`
 @code`? a "011"`
-@code`A b`
-@code`? a "011"`
+@code`? a ""`
+@code`? c "10"`
