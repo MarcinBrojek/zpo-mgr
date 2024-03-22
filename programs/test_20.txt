@@ -1,3 +1,5 @@
+# Automaton example (deterministic run)
+
 @syntax(syntax_program){sp: transition | accept | query | /unit/}
 @syntax(syntax_transition){transition: /\+/ state "-" letter "-" state}
 @syntax(syntax_run){query: /\?/ state text}
@@ -177,3 +179,41 @@ n = [1 if n_1[0] <= n_2[0] else 0]
 @code`? a "011"`
 @code`? a ""`
 @code`? c "10"`
+
+@syntax(syntax_program){sp: transition | remove | accept | query | /unit/}
+@syntax(syntax_transition_rm){remove: /-/ state "-" letter "-" state}
+
+@semantics(remove_transition){
+    remove_transition(@s_1, `- @state_1 - @letter - @state_2` | @s_2, n`1`)
+    ---
+    <`- @state_1 - @letter - @state_2`, @s_1> => @s_2
+}
+
+@typing(remove){
+    letter_size_one(letter`@letter` | n`1`)
+    ---
+    @G |- `- @state_1 - @letter - @state_2` : `unit`
+}
+
+remove_transition(@s_1, `- @state_1 - @letter - @state_2` | @s_2, n`@n`)`
+s_2 = s_1
+if "transitions" in s_2[1]:
+    transition = (state_1[0], letter[0].strip('"\''), state_2[0])
+    s_2[1]["transitions"] = list(filter((transition).__ne__, s_2[1]["transitions"]))
+    n = [1]
+else:
+    n = [0]
+`
+
+@code`A b`
+@code`? c "11"`
+
+@semantics(dead_end){
+    false_end(|)
+    ---
+    <iterate`@text @n`, @s> => @s
+}
+
+@code`- a - "1" - b`
+@code`? a ""`
+@code`? a "1"`

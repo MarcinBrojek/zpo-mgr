@@ -1,3 +1,5 @@
+# example_01 with not only sp
+
 @syntax(sp){sp: /unit/}
 @syntax(e){e: /0/ | /s/ "(" e ")" | e /\+/ e}
 
@@ -42,9 +44,14 @@ else:
 }
 
 @semantics(end){
+    print_store(@s |)
     ---
     <e`0`, @s> => @s
 }
+
+print_store(@s |)`
+print(s[1])
+`
 
 @code e`s(s(0)) + s(0) + 0 + s(0)`
 @code e`0 + s(s(s(0)))`

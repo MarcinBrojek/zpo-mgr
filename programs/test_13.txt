@@ -1,3 +1,6 @@
+# example_03 with not only sp
+# shafled operational rules
+
 @syntax(sp){sp: n | string | "(" sp "+" sp ")" | t}
 @syntax(t){t: /unit/ | /t_dot/}
 @syntax(n){n: I}
@@ -43,15 +46,15 @@
 
 
 @semantics(oe1){
-    <`@sp_1`, @s> => <`@sp_3`, @s>
+    <`(@sp_0 + @sp_1)`, @s> => <`@sp_3`, @s>
     ---
-    <`(@sp_1 + @sp_2)`, @s> => <`(@sp_3 + @sp_2)`, @s>
+    <`((@sp_0 + @sp_1) + @sp_2)`, @s> => <`(@sp_3 + @sp_2)`, @s>
 }
 
 @semantics(oe2){
-    <`@sp_2`, @s> => <`@sp_3`, @s>
+    <`(@sp_1 + @sp_2)`, @s> => <`@sp_3`, @s>
     ---
-    <`(@sp_1 + @sp_2)`, @s> => <`(@sp_1 + @sp_3)`, @s>
+    <`(@sp_0 + (@sp_1 + @sp_2))`, @s> => <`(@sp_0 + @sp_3)`, @s>
 }
 
 string_to_string(string`@string_1`, string`@string_2` | string`@string_3`)`
@@ -70,22 +73,10 @@ int_to_int(n`@n_1`, n`@n_2` | n`@n_3`)`
 n_3 = list([n_1[0] + n_2[0]])
 `
 
-@semantics(oe3){
-    string_to_string(string`@string_1`, string`@string_2` | string`@string_3`)
-    ---
-    <`(@string_1 + @string_2)`, @s> => <`@string_3`, @s>
-}
-
 @semantics(oe4){
     string_to_int(string`@string_1`, string`@string_2` | n`@n_3`)
     ---
     <`(@string_1 + @string_2)`, @s> => <`@n_3`, @s>
-}
-
-@semantics(oe5){
-    int_to_string(n`@n_1`, n`@n_2` | string`@string_3`)
-    ---
-    <`(@n_1 + @n_2)`, @s> => <`@string_3`, @s>
 }
 
 @semantics(oe6){
@@ -94,22 +85,38 @@ n_3 = list([n_1[0] + n_2[0]])
     <`(@n_1 + @n_2)`, @s> => <`@n_3`, @s>
 }
 
-s_end(@s_1, n`@n` | @s_2)`
-s_2 = n
+@semantics(oe3){
+    string_to_string(string`@string_1`, string`@string_2` | string`@string_3`)
+    ---
+    <`(@string_1 + @string_2)`, @s> => <`@string_3`, @s>
+}
+
+@semantics(oe5){
+    int_to_string(n`@n_1`, n`@n_2` | string`@string_3`)
+    ---
+    <`(@n_1 + @n_2)`, @s> => <`@string_3`, @s>
+}
+
+s_end1(@s_1, n`@n` | @s_2)`
+s_2 = s_1
+print(n[0])
+s_2[1] = n[0]
 `
 
-s_end(@s_1, string`@string` | @s_2)`
-s_2 = string
+s_end2(@s_1, string`@string` | @s_2)`
+s_2 = s_1
+print(string[0])
+s_2[1] = string[0]
 `
 
 @semantics(oe7){
-    s_end(@s_1, n`@n` | @s_2)
+    s_end1(@s_1, n`@n` | @s_2)
     ---
     <`@n`, @s_1> => @s_2
 }
 
 @semantics(oe8){
-    s_end(@s_1, string`@string` | @s_2)
+    s_end2(@s_1, string`@string` | @s_2)
     ---
     <`@string`, @s_1> => @s_2
 }

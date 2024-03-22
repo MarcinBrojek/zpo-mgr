@@ -37,3 +37,6 @@ ro   : "@semantics" "(" ID ")" "{" uo "---" [tr | trend] "}"
 rt   : "@typing" "(" ID ")" "{" ut "---" ty "}"
 
 b    : /@b(\_\w+)?/ // breakpoint for DEBUG
+
+COMMENT: "#" /[^\n]/* // support for python comment
+%ignore COMMENT

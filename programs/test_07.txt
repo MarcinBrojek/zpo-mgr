@@ -1,3 +1,5 @@
+# example with finite loop in typing
+
 @syntax(sp_next){sp: /unit/ | i}
 @syntax(i_next){i: I}
 
@@ -21,12 +23,6 @@ i_2[0] -= 1
     @G |- i`@i_2` : `unit`
     ---
     @G |- i`@i_1` : `unit`
-}
-
-@typing(t3_next){
-    @G |- i`0` : `unit`
-    ---
-    @G |- i`10` : `unit`
 }
 
 @semantics(o0_next){
