@@ -1,3 +1,5 @@
+# example with correct brackets
+
 @syntax(sp){sp: /unit/ | /\(/ sp |  /\)/ sp | /\(/ | /\)/}
 
 @typing(t1){
@@ -86,3 +88,4 @@ print("FALSE")
 @code`())`
 @code`(()`
 @code`)(`
+@code`()((())())`

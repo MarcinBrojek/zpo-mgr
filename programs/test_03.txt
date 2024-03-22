@@ -1,3 +1,6 @@
+# more complex example - typing example
+# deepest sums must have same type: n+n, string+string
+
 @syntax(sp){sp: n | string | "(" sp "+" sp ")" | t}
 @syntax(t){t: /unit/ | /t_dot/}
 @syntax(n){n: I}
@@ -43,15 +46,15 @@
 
 
 @semantics(oe1){
-    <`@sp_1`, @s> => <`@sp_3`, @s>
+    <`(@sp_0 + @sp_1)`, @s> => <`@sp_3`, @s>
     ---
-    <`(@sp_1 + @sp_2)`, @s> => <`(@sp_3 + @sp_2)`, @s>
+    <`((@sp_0 + @sp_1) + @sp_2)`, @s> => <`(@sp_3 + @sp_2)`, @s>
 }
 
 @semantics(oe2){
-    <`@sp_2`, @s> => <`@sp_3`, @s>
+    <`(@sp_1 + @sp_2)`, @s> => <`@sp_3`, @s>
     ---
-    <`(@sp_1 + @sp_2)`, @s> => <`(@sp_1 + @sp_3)`, @s>
+    <`(@sp_0 + (@sp_1 + @sp_2))`, @s> => <`(@sp_0 + @sp_3)`, @s>
 }
 
 string_to_string(`@string_1`, `@string_2` | `@string_3`)`
@@ -94,22 +97,26 @@ n_3 = list([n_1[0] + n_2[0]])
     <`(@n_1 + @n_2)`, @s> => <`@n_3`, @s>
 }
 
-s_end(@s_1, `@n` | @s_2)`
-s_2 = n
+s_end1(@s_1, `@n` | @s_2)`
+s_2 = s_1
+print(n[0])
+s_2[1] = n[0]
 `
 
-s_end(@s_1, `@string` | @s_2)`
-s_2 = string
+s_end2(@s_1, `@string` | @s_2)`
+s_2 = s_1
+print(string[0])
+s_2[1] = string[0]
 `
 
 @semantics(oe7){
-    s_end(@s_1, `@n` | @s_2)
+    s_end1(@s_1, `@n` | @s_2)
     ---
     <`@n`, @s_1> => @s_2
 }
 
 @semantics(oe8){
-    s_end(@s_1, `@string` | @s_2)
+    s_end2(@s_1, `@string` | @s_2)
     ---
     <`@string`, @s_1> => @s_2
 }

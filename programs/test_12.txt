@@ -1,3 +1,5 @@
+# example_02 with not only sp
+
 @syntax(sp){sp: /unit/ | /print/ "(" string ")"}
 @syntax(string){string: STR}
 
@@ -7,7 +9,7 @@
 }
 
 pred_print(string`@string` |)`
-print("OUT: " + string[0])
+print("OUT: " + string[0][1:-1])
 `
 
 @semantics(o1){
@@ -22,7 +24,10 @@ print("OUT: " + string[0])
 print("IN: " + string[0])
     `
 
-    @code`print("printed in block")`
+    @code`print("printed in block (STR is like \" str \")")`
 }
 
 @code`print( "printed outside of block" )`
+
+# @code`print(print("this is first element - print is 0th"))` # <- that not work
+

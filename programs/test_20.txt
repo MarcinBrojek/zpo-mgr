@@ -1,3 +1,5 @@
+# Automaton example (deterministic run)
+
 @syntax(syntax_program){sp: transition | accept | query | /unit/}
 @syntax(syntax_transition){transition: /\+/ state "-" letter "-" state}
 @syntax(syntax_run){query: /\?/ state text}

@@ -1,3 +1,5 @@
+# example for debug - infinite loop o1_abort and stick in o4_abort
+
 @syntax(sp_next){sp: /unit/ | i}
 @syntax(i_next){i: I}
 

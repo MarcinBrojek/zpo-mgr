@@ -1,3 +1,5 @@
+# 's()' counter in state
+
 @syntax(sp){sp: e | t}
 @syntax(e){e: /0/ | /s/ "(" e ")" | e /\+/ e}
 @syntax(t){t: /unit/}
@@ -48,9 +50,14 @@ else:
 }
 
 @semantics(end){
+    print_store(@s |)
     ---
     <`0`, @s> => @s
 }
+
+print_store(@s |)`
+print(s[1])
+`
 
 @code`s(s(0)) + s(0) + 0 + s(0)`
 @code`0 + s(s(s(0)))`

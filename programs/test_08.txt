@@ -1,3 +1,5 @@
+# example with lambda calculus - maybe incorrect
+
 @syntax(sp){sp: e | t}
 
 @syntax(n){n: I}
@@ -122,7 +124,12 @@ G_2 = G_1
 G_2[x[0]] = t[0]
 `
 
+print_ns(n`@n`, @s |)`
+print(n[0], s)
+`
+
 @semantics(oend){
+    print_ns(n`@n`, @s |)
     ---
     <`@n`, @s> => @s
 }

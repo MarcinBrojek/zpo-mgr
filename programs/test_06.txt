@@ -1,3 +1,5 @@
+# example for debug, blokcs structure + breakpoints
+
 @syntax(sp_next){sp: /unit/ | i}
 @syntax(i_next){i: I}
 
