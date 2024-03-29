@@ -280,12 +280,14 @@ class Prover:
         if not isinstance(current, Transition):
             return False
 
-        b, [s1, c1] = try_update_constr([current.s1, current.c1], m)
+        b, current_l = try_update_constr([current.s1, current.c1], m)
         if not b:
             return False
 
+        b1, current_l1 = try_update_constr([current.s1, current.c1, current.s2, current.c2], m)
+
         # type check for starting construction
-        if (c1 is not None) and (not self.try_typing(s1, c1, unique_suf)):
+        if (current_l[1] is not None) and (not self.try_typing(current_l[0], current_l[1], unique_suf)):
             return False
 
         # DEBUG - depth - tmp save
@@ -295,8 +297,13 @@ class Prover:
         for ro_id in self.ro_all:
             ro = self.ro_all[ro_id].override_vars(unique_suf)
             uo, tr = ro.uo, ro.tr
-            b, m_tr = try_unify_constrs([s1, c1], [tr.s1, tr.c1])
 
+            tr_l = list([tr.s1, tr.c1])
+            if b1:
+                current_l = current_l1
+                tr_l = [tr.s1, tr.c1, tr.s2, tr.c2]
+
+            b, m_tr = try_unify_constrs(current_l, tr_l)
             if not b:
                 continue
             # print(f"DEBUG: udane unify:{m_tr}")

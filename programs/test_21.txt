@@ -158,5 +158,6 @@ b = ["T" if set(b_1[0].items()) <= set(b_2[0].items()) else "F"]
 
 @code`sat (!x ^ x)`
 
+@code`sat (((x <-> y) v (z <-> q)) <-> (T -> !x))`
 
 @code`sat (((!x -> y) ^ (!y -> z)) ^ ((y ^ !x) ^ (z -> !x)))`
