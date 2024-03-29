@@ -22,6 +22,7 @@ TESTS = [
     {"name": "test_12.txt", "data": EMPTY_DATA_RESET},
     {"name": "test_13.txt", "data": EMPTY_DATA_RESET},
     {"name": "test_20.txt", "data": EMPTY_DATA_NO_RESET},
+    {"name": "test_21.txt", "data": EMPTY_DATA_NO_RESET},
 ]
 
 

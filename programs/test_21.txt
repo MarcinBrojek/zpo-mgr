@@ -1,0 +1,163 @@
+# Satisfiability of propositional formula
+
+@syntax(syntax_program){sp: e | /unit/ | /sat/ e}
+@syntax(syntax_expr){e: b | v | /!/ e | "(" e op e ")"}
+@syntax(syntax_operator){op: /\^/ | /v/ | /<->/ | /->/}
+
+@syntax(syntax_var){v: ID}
+@syntax(syntax_boolean){b: /T/ | /F/}
+
+# store is valuation: ID -> {/T/ | /F/}
+
+print_result(b`@b`, @s |)`
+if b[0] == "T":
+    print("Satisfiable: " + str(s[1]))
+else:
+    print("Unsatisfiable :(")
+`
+
+@semantics(satisfiable){
+    <`@e`, @s_1> => <b`T`, @s_2>
+    print_result(b`T`, @s_2 |)
+    ---
+    <`sat @e`, @s_1> => @s_2
+}
+@semantics(unsatisfiable){
+    print_result(b`F`, @s |)
+    ---
+    <`sat @e`, @s> => @s
+}
+
+neg_bool(b`@b_1` | b`@b_2`)`
+b_2 = ['T' if b_1[0] == 'F' else 'F']
+`
+
+@semantics(neg_e){
+    <`@e`, @s_1> => <b`@b_1`, @s_2>
+    neg_bool(b`@b_1` | b`@b_2`)
+    ---
+    <`! @e`, @s_1> => <b`@b_2`, @s_2>
+}
+
+@semantics(and_true){
+    <`@e_1`, @s_1> => <b`T`, @s_2>
+    <`@e_2`, @s_2> => <b`T`, @s_3>
+    ---
+    <`( @e_1 ^ @e_2 )`, @s_1> => <b`T`, @s_3>
+}
+@semantics(and_false_a){
+    <`@e_1`, @s_1> => <b`F`, @s_2>
+    ---
+    <`( @e_1 ^ @e_2 )`, @s_1> => <b`F`, @s_2>
+}
+@semantics(and_false_b){
+    <`@e_2`, @s_1> => <b`F`, @s_2>
+    ---
+    <`( @e_1 ^ @e_2 )`, @s_1> => <b`F`, @s_2>
+}
+
+@semantics(or){
+    <`( !@e_1 ^ !@e_2 )`, @s_1> => <b`@b_1`, @s_2>
+    neg_bool(b`@b_1` | b`@b_2`)
+    ---
+    <`( @e_1 v @e_2 )`, @s_1> => <b`@b_2`, @s_2>
+}
+
+@semantics(implies){
+    <`( !@e_1 v @e_2 )`, @s_1> => <b`@b`, @s_2>
+    ---
+    <`( @e_1 -> @e_2 )`, @s_1> => <b`@b`, @s_2>
+}
+
+@semantics(equiv){
+    <`( (@e_1 -> @e_2) ^ (@e_2 -> @e_1) )`, @s_1> => <b`@b`, @s_2>
+    ---
+    <`( @e_1 <-> @e_2 )`, @s_1> => <b`@b`, @s_2>
+}
+
+@semantics(expr_to_bool){
+    ---
+    <`@b`, @s> => <b`@b`, @s>
+}
+
+assign_value(b`@b`, v`@v`, @s_1 | @s_2)`
+s_2 = s_1
+s_2[1][v[0]] = b[0]
+`
+
+@semantics(var_true){
+    assign_value(b`T`, v`@v`, @s_1 | @s_2)
+    ---
+    <`@v`, @s_1> => <b`T`, @s_2>
+}
+@semantics(var_false){
+    assign_value(b`F`, v`@v`, @s_1 | @s_2)
+    ---
+    <`@v`, @s_1> => <b`F`, @s_2>
+}
+
+@typing(t_b){
+    ---
+    @G |- b`@b` : `unit`
+}
+@typing(t_sp){
+    ---
+    @G |- `@sp` : `unit` 
+}
+
+# @code`sat !T`
+# @code`sat (T ^ !T)`
+# @code`sat x`
+# @code`sat !x`
+# @code`sat ((x ^ y) <-> (z -> u))`
+
+@code`sat (!x ^ x)` # <- we overwrite valuation without checking
+
+@semantics(satisfiable){
+    state_prepare(@s_1 | @s)
+    <`@e`, @s> => <b`T`, @s_2>
+    print_result(b`T`, @s_2 |)
+    ---
+    <`sat @e`, @s_1> => @s_2
+}
+
+state_prepare(@s_1 | @s_2)`
+s_2 = s_1
+s_2[1] = dict()
+s_2[0] = [None, None]
+`
+
+assign_value(b`@b`, v`@v`, @s_1 | @s_2)`
+s_2 = s_1
+s_2[0][0] = s_2[1].copy() # before add new value
+s_2[1][v[0]] = b[0]
+s_2[0][1] = s_2[1] # after
+`
+
+move_Gamma_to_maps(@G | b`@b_1`, b`@b_2`)`
+b_1 = [G[0]]
+b_2 = [G[1]]
+`
+
+@typing(t_b){
+    move_Gamma_to_maps(@G | b`@b_1`, b`@b_2`)
+    @G |- b`@b_1` <: b`@b_2`
+    ---
+    @G |- b`@b` : `unit`
+}
+
+@typing(st_x){
+    maps_subset(b`@b_1`, b`@b_2` | b`T`)
+    ---
+    @G |- b`@b_1` <: b`@b_2`
+}
+
+maps_subset(b`@b_1`, b`@b_2` | b`@b`)`
+b = ["T" if set(b_1[0].items()) <= set(b_2[0].items()) else "F"]
+`
+
+@code`sat (!x ^ x)`
+
+@code`sat (((x <-> y) v (z <-> q)) <-> (T -> !x))`
+
+@code`sat (((!x -> y) ^ (!y -> z)) ^ ((y ^ !x) ^ (z -> !x)))`
