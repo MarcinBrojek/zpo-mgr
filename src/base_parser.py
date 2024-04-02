@@ -14,8 +14,6 @@ class BaseParser:
         with open(grammar_path) as grammar_path_file, open(tranformer_path) as tranformer_path_file:
             self.base_grammar_txt = grammar_path_file.read()
             self.base_tranformer_txt = tranformer_path_file.read()
-            grammar_path_file.close()
-            tranformer_path_file.close()
         self.rs_all = list()
         self.need_update = True
         self.start = str("# No start at the beggining")
@@ -51,7 +49,6 @@ class BaseParser:
 
             with open("tmp/tmp_transformer.py", "w") as tmp_transformer_import:
                 tmp_transformer_import.write(tranformer_txt)
-                tmp_transformer_import.close()
 
             self.grammar_txt = grammar_txt
             self.parser = Lark(grammar=grammar_txt, start=start, parser="earley")

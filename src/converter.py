@@ -19,9 +19,15 @@ def ntm(c, sub=None):
 def id(c):
     txt = ""
     for el in c:
-        if el == "_":
-            txt += r'\_'
-        elif el != "\\"[0]:
+        if el == "^":
+            txt += r'\textasciicircum'
+        elif el in ["_", "$", "%", "&", "~", "{", "}"]:
+            txt += "\\"[0] + el
+        elif el in ["<", ">"]:
+            txt += "$" + el + "$"
+        elif el == "\\"[0]:
+            txt += "$\\backslash$"
+        else:
             txt += el
     return txt
 
@@ -40,7 +46,7 @@ def tex(c):
         for el in c:
             txt += tmb(",")
             txt += tex(el)
-        return tmb("(") + txt[7:] + tmb(")") # TODO: nice looking if can be
+        return tmb("(") + txt[7:] + tmb(")")
     
     elif name == "dict":
         for el in c:
@@ -65,8 +71,8 @@ def tex(c):
     
     elif name == "Transition":
         if c.ending:
-            return tm("$<$") + tex(c.c1) + tm(",") + tex(c.s1) + tm("$>$") + r' $\to$ ' + tex(c.s2)
-        return tm("$<$") + tex(c.c1) + tm(",") + tex(c.s1) + tm("$>$") + r' $\to$ ' + tm("$<$") + tex(c.c2) + tm(",") + tex(c.s2) + tm("$>$")
+            return tm(r'$\langle$') + tex(c.c1) + tm(",") + tex(c.s1) + tm(r'$\rangle$') + r' $\to$ ' + tex(c.s2)
+        return tm(r'$\langle$') + tex(c.c1) + tm(",") + tex(c.s1) + tm(r'$\rangle$') + r' $\to$ ' + tm(r'$\langle$') + tex(c.c2) + tm(",") + tex(c.s2) + tm(r'$\rangle$')
     
     elif name == "Typing":
         return tex(c.g) + r' $\vdash$ ' + tex(c.c1) + tex(c.r) + tex(c.c2)
@@ -108,6 +114,9 @@ def tex(c):
 
     elif name == "Code":
         return tex(c.rsp)
+    
+    elif name == "Breakpoint":
+        return r'\textcolor{red}{B-' + id(c.id) + r'}'
     
     elif name == "int":
         return r'$' + str(c) + r'$'
@@ -198,6 +207,10 @@ showstringspaces=false
     
     dirname = os.getcwd()
     os.chdir(os.path.join(dirname, "tmp"))
+
+    with open("tmp_convert.tex", "w") as tmp_tex:
+        tmp_tex.write(context)
+
     pdf = build_pdf(context)
     pdf.save_to("tmp_convert.pdf")
     os.chdir(dirname)

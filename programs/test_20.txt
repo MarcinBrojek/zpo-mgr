@@ -6,7 +6,6 @@
 @syntax(syntax_accept){accept: /A/ state}
 
 @syntax(syntax_iterate){iterate: text n}
-@syntax(syntax_fire){fire: text n}
 
 @syntax(syntax_state){state: ID}
 @syntax(syntax_letter){letter: STR}
