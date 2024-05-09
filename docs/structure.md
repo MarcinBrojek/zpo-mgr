@@ -66,5 +66,6 @@
     - [`transformer.py`](../src/transformer.py) : Lark transformer for main language.
 
 - ### [tmp/](../tmp/) - empty at repositiory
+    - `tmp_convert.tex` : Generated tex for choosen construction.
     - `tmp_convert.pdf` : Generated pdf for choosen construction.
     - `tmp_transforer.py` : Generated lark transformer for user's program.
