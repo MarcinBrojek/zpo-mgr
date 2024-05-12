@@ -12,7 +12,7 @@ The project / interpreter was developed in the Python language and solely relies
 ## Short example of use.
 
 1. Design your language and use it - all in one file.
-(The contents of the file: [test_02.txt](./programs/test_02.txt))
+(The contents of the file: [test_02.txt](./programs/original_02.txt))
 
 <pre>
 
@@ -52,7 +52,7 @@ print("IN: " + string[0])
 2. Run [main.py](./main.py) with one argument - file from point 1.
 
 ```console
-> python main.py programs/test_02.txt
+> python main.py programs/original_02.txt
 ```
 3. Watch the resulsts of calling programs. (on your own)
 
