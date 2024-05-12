@@ -12,6 +12,9 @@ EMPTY_DATA_RESET = {"start_gamma": dict(), "start_store": dict(), "reset_program
 EMPTY_DATA_NO_RESET = {"start_gamma": dict(), "start_store": dict(), "reset_program_state": False}
 
 TESTS = [
+    {"name": "original_02.txt", "data": EMPTY_DATA_RESET},
+    {"name": "original_02.txt", "data": EMPTY_DATA_NO_RESET},
+
     {"name": "test_01.txt", "data": EMPTY_DATA_RESET},
     {"name": "test_02.txt", "data": EMPTY_DATA_RESET},
     {"name": "test_03.txt", "data": EMPTY_DATA_RESET},
@@ -21,6 +24,7 @@ TESTS = [
     {"name": "test_11.txt", "data": EMPTY_DATA_RESET},
     {"name": "test_12.txt", "data": EMPTY_DATA_RESET},
     {"name": "test_13.txt", "data": EMPTY_DATA_RESET},
+
     {"name": "test_20.txt", "data": EMPTY_DATA_NO_RESET},
     {"name": "test_21.txt", "data": EMPTY_DATA_NO_RESET},
 ]
@@ -39,6 +43,7 @@ class Capturing(list):
 
 
 def main():
+    test_name, data = None, None
     try:
         for test in TESTS:
             test_name, data = test["name"], test["data"]
@@ -55,13 +60,16 @@ def main():
 
                 grammar_file.close()
                 input_code_file.close()
+            
+            print(f"{test_name} OK")
 
     except Exception as e:
+        print(f"{test_name} BAD")
         output = ''.join(output)
-        print(output) # output contain last output
-        raise e
+        print(output) # output contain last output - error
+        raise e # stop testing at first error
 
-    print("tests passed!")
+    print("all tests passed!")
 
 
 if __name__ == "__main__":

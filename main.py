@@ -3,7 +3,7 @@ from pathlib import Path
 from lark import Lark
 from src.transformer import OptimusPirme
 from src.interpreter import Interpreter
-from src.converter import gen_tex
+from debugger.converter import gen_tex
 from debugger.debugger import Debugger
 import curses
 

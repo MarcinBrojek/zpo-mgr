@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.converter import gen_tex
+from debugger.converter import gen_tex
 import yaml
 
 

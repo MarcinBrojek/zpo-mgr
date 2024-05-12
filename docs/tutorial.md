@@ -187,7 +187,7 @@ Form of block:
 }
 </pre>
 
-Easy example of use: [test_02.txt](../programs/test_02.txt).
+Easy example of use: [test_02.txt](../programs/original_02.txt).
 
 ## Full example and interpretation
 

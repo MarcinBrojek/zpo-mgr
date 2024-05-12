@@ -5,6 +5,7 @@
 ├── LICENSE
 ├── README.md
 ├── debugger/
+│   ├── converter.py
 │   ├── debug_config.yaml
 │   └── debugger.py
 ├── docs/
@@ -23,7 +24,6 @@
 │   ├── base_parser.py
 │   ├── base_transformer.txt
 │   ├── classes.py
-│   ├── converter.py
 │   ├── grammar.lark
 │   ├── interpreter.py
 │   ├── interpreter_config.yaml
@@ -35,6 +35,7 @@
 ## Description
 
 - ### [debugger/](../debugger/)
+    - [`converter.py`](../debugger/converter.py) : Simple converter of construction into LaTeX code.
     - [`debug_config.yaml`](../debugger/debug_config.yaml): Configuration file for debugging.
     - [`debugger.py`](../debugger/debugger.py): Main class for debugging.
 
@@ -58,7 +59,6 @@
     - [`base_parser.py`](../src/base_parser.py) : Parser, that cooperates with base grammar and transformer.
     - [`base_transformer.txt`](../src/base_transformer.txt) : Fundation of lark transformer in txt for user's program.
     - [`classes.py`](../src/classes.py) : Contains most classes existing in other files.
-    - [`converter.py`](../src/converter.py) : Simple converter of construction into LaTeX code.
     - [`grammar.lark`](../src/grammar.lark) : Grammar for main language.
     - [`interpreter.py`](../src/interpreter.py) : Interpreter for main language.
     - [`interpreter_config.yaml`](../src/interpreter_config.yaml) : Configuration file for interpreter.

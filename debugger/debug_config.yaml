@@ -1,11 +1,11 @@
 # Feel free to set the values as you want
 
 follow:
-    program         : false  # (false / true)
-    config          : false   # (false / true)
+    program         : true  # (false / true)
+    config          : true   # (false / true)
     breakpoint      : true   # (false / true)
     transition      : true  # (false / true)
-    typing          : false  # (false / true)
+    typing          : true  # (false / true)
 
 # when print to terminal, each moment cleae it
 clear_window        : true # (false / true)

@@ -1,0 +1,32 @@
+# use of STR example
+
+@syntax(sp){sp: /unit/ | /print/ "(" sp ")" | string}
+@syntax(string){string: STR}
+
+@typing(t1){
+    ---
+    @G |- `@sp` : `unit`
+}
+
+pred_print(`@sp` |)`
+print("OUT: " + sp[0])
+`
+
+@semantics(o1){
+    pred_print(`@sp` |)
+    ---
+    <`print(@sp)`, @s> => @s
+}
+
+{
+
+    pred_print(`@string` |)`
+print("IN: " + string[0])
+    `
+
+    @code`print("printed in block")`
+}
+
+@syntax(sp){sp: /unit/ | /print/ "(" sp ")" | STR}
+
+@code`print( "printed outside of block" )`
