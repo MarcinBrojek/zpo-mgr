@@ -11,7 +11,7 @@ follow:
 clear_window        : true # (false / true)
 
 # make convert at each moment (tmp folder - reset each time)
-# convert_auto        : false # (false / true)
+convert_auto        : true # (false / true)
 
 # > each key is int that represents key from 'curses' package
 # > keys within group are unique - exception -> unique in all keys: global_skip, global_abort, print_pdf, refresh)
