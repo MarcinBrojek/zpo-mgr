@@ -38,23 +38,23 @@ def tex(c):
 
     if name == "list":
         for el in c:
-            txt += tmb(",")
+            txt += tmb(", ")
             txt += tex(el)
-        return tmb("[") + txt[7:] + tmb("]")
+        return tmb("[") + txt[8:] + tmb("]")
     
     elif name == "tuple": # (rule_name, c)
         for el in c:
-            txt += tmb(",")
+            txt += tmb(", ")
             txt += tex(el)
-        return tmb("(") + txt[7:] + tmb(")")
+        return tmb("(") + txt[8:] + tmb(")")
     
     elif name == "dict":
         for el in c:
-            txt += tmb(",")
+            txt += tmb(", ")
             txt += tex(el)
             txt += tmb(":")
             txt += tex(c[el])
-        return tmb(r'\{') + txt[7:] + tmb(r'\}')
+        return tmb(r'\{') + txt[8:] + tmb(r'\}')
 
     elif name == "Var":
         if c.ntm == "G":
@@ -96,7 +96,7 @@ def tex(c):
                     txt += ntm(el)
                 else:
                     txt += tex(el)
-        return ntm(id(c.id)) + r'$\in$ ' + id(c.name_id) + r' ::= ' + txt[5:] + r'\\'
+        return id(c.name_id) + r':  ' + ntm(id(c.id)) + r' ::= ' + txt[5:] + r'\\'
     
     elif name == "Ro":
         for el in c.uo:
