@@ -82,6 +82,9 @@ class Debugger:
         self.add_window_info(c)
         depth = self.depth
 
+        if self.data["convert_auto"]:
+            gen_tex(c)
+
         read = False
         while(not read):
             key = self.stdscr.getch()
