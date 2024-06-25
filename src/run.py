@@ -66,9 +66,9 @@ def try_unify_constrs(c1, c2):
 
 class Prover:
 
-    def __init__(self, parser, env, program_state, c, debugger):
+    def __init__(self, parser, env, program_state, c, debugger, unit_nonterminal, unit_name):
         self.d_all, self.rt_all, self.ro_all = env.d_all, env.rt_all, env.ro_all
-        self.unit = parser.run("sp", "unit")
+        self.unit = parser.run(unit_nonterminal, unit_name) # normally it is "sp" and "unit"
         self.s = program_state
         self.c = c
         self.debugger = debugger

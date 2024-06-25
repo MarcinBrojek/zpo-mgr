@@ -31,6 +31,8 @@ class IState:
         self.start_store = data["start_store"]
         self.start_gamma = data["start_gamma"]
         self.reset_program_state = data["reset_program_state"]
+        self.unit_nonterminal = data["unit_nonterminal"]
+        self.unit_name = data["unit_name"]
         self.program_state = [deepcopy(self.start_store), deepcopy(self.start_gamma)]
 
     def try_reset_program_state(self):
@@ -106,7 +108,7 @@ class Interpreter:
             self.debugger.in_prove = True # DEBUG
             self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on program from transition
 
-            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger)
+            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger, self.state.unit_nonterminal, self.state.unit_name)
 
             b = True
             # perform sos
