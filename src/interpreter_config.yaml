@@ -6,3 +6,8 @@ start_store: {}
 
 # set gamma and store at the beggining of each code to start values
 reset_program_state: false # (false / true)
+
+# name of starting non-terminal for /unit/ type and modified name of /<unit>/
+# both used for typing of each construction
+unit_nonterminal: "sp"
+unit_name: "unit"

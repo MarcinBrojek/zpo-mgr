@@ -1,0 +1,82 @@
+# Successor and adding
+# ! please change name of nonterminal for /unit/: to "t" in config of interpreter
+
+@syntax(type){t: /expr/ | /unit/}
+@syntax(expr){e: "0" | "s(" e ")" | e "+" e}
+
+@typing(expr){
+    ---
+    @G |- e`@e` : t`expr`
+}
+
+@typing(expr_as_unit){
+    @G |- e`@e` : t`expr`
+    ---
+    @G |- e`@e` : t`unit`
+}
+
+@semantics(move_successor){
+    ---
+    <e`@e_1 + s(@e_2)`, @s> => <e`s(@e_1) + @e_2`, @s>
+}
+
+@semantics(reduce_right_side){
+    ---
+    <e`@e + 0`, @s> => <e`@e`, @s>
+}
+
+@semantics(simplify_left_side){
+    <e`@e_1`, @s> => <e`@e_3`, @s>
+    ---
+    <e`@e_1 + @e_2`, @s> => <e`@e_3 + @e_2`, @s>
+}
+
+@semantics(simplify_right_side){
+    <e`@e_2`, @s> => <e`@e_3`, @s>
+    ---
+    <e`@e_1 + @e_2`, @s> => <e`@e_1 + @e_3`, @s>
+}
+
+print_pipe(|)`
+print("|", end='')
+`
+
+@semantics(end_steps){
+    print_pipe(|)
+    ---
+    <e`s(@e)`, @s> => <e`@e`, @s>
+}
+
+@semantics(end){
+    ---
+    <e`0`, @s> => @s
+}
+
+@code e`s(s(0)) + s(0) + 0 + s(0)`
+
+
+update(e`s(@e)`, @s_1 | e`@e`, @s_2)`
+s_2 = s_1
+if type(s_2[1]) != int:
+    s_2[1] = 1
+else:
+    s_2[1] += 1
+`
+
+@semantics(end_steps){
+    update(e`@e_1`, @s_1 | e`@e_2`, @s_2)
+    ---
+    <e`@e_1`, @s_1> => <e`@e_2`, @s_2>
+}
+
+@semantics(end){
+    print_store(@s |)
+    ---
+    <e`0`, @s> => @s
+}
+
+print_store(@s |)`
+print('\n', s[1])
+`
+
+@code e`s(s(0)) + s(0) + 0 + s(0)`

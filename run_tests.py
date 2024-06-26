@@ -8,8 +8,8 @@ import sys
 
 GRAMMAR_PATH = Path(__file__).parent / "src/grammar.lark"
 
-EMPTY_DATA_RESET = {"start_gamma": dict(), "start_store": dict(), "reset_program_state": True}
-EMPTY_DATA_NO_RESET = {"start_gamma": dict(), "start_store": dict(), "reset_program_state": False}
+EMPTY_DATA_RESET = {"start_gamma": dict(), "start_store": dict(), "reset_program_state": True, "unit_nonterminal": "sp", "unit_name": "unit"}
+EMPTY_DATA_NO_RESET = {"start_gamma": dict(), "start_store": dict(), "reset_program_state": False, "unit_nonterminal": "sp", "unit_name": "unit"}
 
 TESTS = [
     {"name": "original_02.txt", "data": EMPTY_DATA_RESET},
@@ -27,6 +27,8 @@ TESTS = [
 
     {"name": "test_20.txt", "data": EMPTY_DATA_NO_RESET},
     {"name": "test_21.txt", "data": EMPTY_DATA_NO_RESET},
+
+    {"name": "test_22.txt", "data": {"start_gamma": dict(), "start_store": dict(), "reset_program_state": False, "unit_nonterminal": "t", "unit_name": "unit"}},
 ]
 
 
