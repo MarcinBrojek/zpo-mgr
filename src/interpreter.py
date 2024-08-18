@@ -107,8 +107,9 @@ class Interpreter:
 
             self.c = p.rsp # sp, after transtlate
 
-            self.debugger.in_prove = True # DEBUG
-            self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on program from transition
+            self.debugger.in_prove = True # -- DEBUG
+            self.debugger.incr_action_depth() # -- DEBUG - avoid influence of skip all / abort all on program from transition
+            self.debugger.clear_steps_number() # DEBUG
 
             prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger, self.state.unit_nonterminal, self.state.unit_name)
 
@@ -119,21 +120,23 @@ class Interpreter:
                 if self.debugger.debug and self.debugger.data["follow"]["config"]:
                     self.debugger.try_reset()
                     if self.debugger.is_aborted():
-                        break # or maybe return?
+                        break
                     self.debugger.read_action({"s": prover.s, "c": prover.c}, "config")
                     if self.debugger.is_aborted():
-                        break # or maybe return?
+                        break
                 # DEBUG
                     
-                self.debugger.incr_action_depth() # DEBUG
+                self.debugger.incr_action_depth() # - DEBUG
 
                 # print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
                 b = prover.try_perform_any_transition() # is performed transition
 
-                self.debugger.decr_action_depth() # DEBUG
+                self.debugger.incr_steps_number() # DEBUG
 
-            self.debugger.decr_action_depth() # DEBUG
-            self.debugger.in_prove = False # DEBUG
+                self.debugger.decr_action_depth() # - DEBUG
+
+            self.debugger.decr_action_depth() # -- DEBUG
+            self.debugger.in_prove = False # -- DEBUG
 
             if prover.c is not None: # final state
                 raise Exception("Stuck in sos")

@@ -86,6 +86,18 @@ TESTS = [
         "last_final_state": [{}, {"cnt": 3}],
     },
     {   
+        "name": "test_05-EMPTY_DATA_NO_RESET",
+        "program": "test_05.txt", 
+        "data": EMPTY_DATA_NO_RESET,
+        "error": "Max steps exceed"
+    },
+    {   
+        "name": "test_06-EMPTY_DATA_NO_RESET",
+        "program": "test_06.txt", 
+        "data": EMPTY_DATA_NO_RESET,
+        "error": "Max steps exceed"
+    },
+    {   
         "name": "test_07-EMPTY_DATA_RESET",
         "program": "test_07.txt", 
         "data": EMPTY_DATA_RESET,
@@ -198,10 +210,13 @@ class Capturing(list):
 
 def main():
     test_name, data = None, None
-    try:
-        for test in TESTS:
-            test_name, program_name, data, last_final_state = test["name"], test["program"], test["data"], test["last_final_state"]
+    for test in TESTS:
+        try:
+            test_name, program_name, data = test["name"], test["program"], test["data"]
             test_path = Path(__file__).parent / "programs" / program_name
+
+            print(f"{test_name} ", end='')
+
             with open(GRAMMAR_PATH, "r") as grammar_file, open(test_path, "r") as input_code_file, Capturing() as output:
 
                 grammar_text = grammar_file.read()
@@ -214,23 +229,28 @@ def main():
                 interpreter = Interpreter(data=data)
                 interpreter.run(optimused_tree)
 
-                if interpreter.state.program_state != last_final_state:
+                if interpreter.state.program_state != test["last_final_state"]:
                     raise Exception("incorrect final state: ", str(interpreter.state.program_state))
 
                 grammar_file.close()
                 input_code_file.close()
             
-            print(f"{test_name} OK")
+            print("OK")
 
-    except Exception as e:
-        print(f"{test_name} BAD")
-        output = ''.join(output)
+        except Exception as e:
 
-        print("\n____________OUTPUT______________\n")
-        print(output) # output contain last output - error
+            if ("error" in test) and (test["error"] == str(e)):
+                print("OK")
+            
+            else:
+                print("BAD")
+                output = ''.join(output)
 
-        print("\n____________ERROR_______________\n")
-        raise e # stop testing at first error
+                print("\n____________OUTPUT______________\n")
+                print(output) # output contain last output - error
+
+                print("\n____________ERROR_______________\n")
+                raise e # stop testing at first error
 
     print("all tests passed!")
 

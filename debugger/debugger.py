@@ -6,6 +6,10 @@ import yaml
 CONFIG_PATH = Path(__file__).parent / "debug_config.yaml"
 
 
+MAX_DEPTH = 5000 # to counter infinite depth of proof
+MAX_STEPS = 5000 # to counter infinite steps of code
+
+
 inf = 1000000 # can be swaped to "real" inf - bigger number
 
 
@@ -23,6 +27,9 @@ class Debugger:
 
         # before new action there will be reset that restore inf
         # value if its depth <= stored action like skip / abort
+
+        self.steps = 0 # actual number of operational semantics step
+                       # even for empty debug
 
         self.skip = inf
         self.abort = inf 
@@ -58,10 +65,20 @@ class Debugger:
         self.stdscr.refresh()
 
     def incr_action_depth(self):
+        if self.depth == MAX_DEPTH:
+            raise Exception("Max depth exceed")
         self.depth += 1
 
     def decr_action_depth(self):
         self.depth -= 1
+
+    def incr_steps_number(self):
+        if self.steps == MAX_STEPS:
+            raise Exception("Max steps exceed")
+        self.steps += 1
+    
+    def clear_steps_number(self):
+        self.steps = 0
 
     def is_skipped(self):
         return self.depth >= self.skip
