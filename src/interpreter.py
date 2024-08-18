@@ -103,6 +103,8 @@ class Interpreter:
             self.state.envs[-1].d_all[p.id] = p
 
         elif name == "Code":
+            self.state.try_reset_program_state()
+
             self.c = p.rsp # sp, after transtlate
 
             self.debugger.in_prove = True # DEBUG
@@ -137,7 +139,6 @@ class Interpreter:
                 raise Exception("Stuck in sos")
             
             self.state.program_state = prover.s
-            self.state.try_reset_program_state()
         
         elif name == "Breakpoint":
             # DEBUG
