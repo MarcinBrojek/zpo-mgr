@@ -6,8 +6,8 @@ import yaml
 CONFIG_PATH = Path(__file__).parent / "debug_config.yaml"
 
 
-MAX_DEPTH = 5000 # to counter infinite depth of proof
-MAX_STEPS = 5000 # to counter infinite steps of code
+MAX_DEPTH = 500 # to counter infinite depth of proof
+MAX_STEPS = 500 # to counter infinite steps of code
 
 
 inf = 1000000 # can be swaped to "real" inf - bigger number

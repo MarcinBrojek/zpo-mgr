@@ -203,7 +203,8 @@ class Prover:
                 continue
 
             # DEBUG
-            self.debugger.depth = debug_tmp_depth + 1
+            self.debugger.depth = debug_tmp_depth
+            self.debugger.incr_action_depth()
             # DEBUG
             last_c2 = self.try_prove_typing(my_tys + [(current.c2, ty.c2)] + ut[::-1], m | m_ty, unique_suf)
             if last_c2:
@@ -309,7 +310,8 @@ class Prover:
             # print(f"DEBUG: udane unify:{m_tr}")
 
             # DEBUG
-            self.debugger.depth = debug_tmp_depth + 1
+            self.debugger.depth = debug_tmp_depth
+            self.debugger.incr_action_depth()
             # DEBUG
             
             last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)

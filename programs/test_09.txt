@@ -1,0 +1,16 @@
+# example of infinite proof in typing
+
+@syntax(sp){sp: /unit/ | "start"}
+
+@typing(t){
+    @G |- `@sp` : `unit`
+    ---
+    @G |- `@sp` : `unit`
+}
+
+@semantics(o){
+    ---
+    <`@sp`, @s> => @s
+}
+
+@code`start`

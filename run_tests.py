@@ -122,6 +122,18 @@ TESTS = [
         "last_final_state": [{"z": "int", "y": "int"}, {"z": 0, "y": 3}],
     },
     {   
+        "name": "test_09-EMPTY_DATA_NO_RESET",
+        "program": "test_09.txt", 
+        "data": EMPTY_DATA_NO_RESET,
+        "error": "Max depth exceed"
+    },
+    {   
+        "name": "test_10-EMPTY_DATA_NO_RESET",
+        "program": "test_10.txt", 
+        "data": EMPTY_DATA_NO_RESET,
+        "error": "Max depth exceed"
+    },
+    {   
         "name": "test_11-EMPTY_DATA_RESET",
         "program": "test_11.txt", 
         "data": EMPTY_DATA_RESET,
