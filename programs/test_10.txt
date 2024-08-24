@@ -1,0 +1,16 @@
+# example of infinite proof in semantics
+
+@syntax(sp){sp: /unit/ | "start"}
+
+@typing(t){
+    ---
+    @G |- `@sp` : `unit`
+}
+
+@semantics(o){
+    <`@sp`, @s> => @s
+    ---
+    <`@sp`, @s> => @s
+}
+
+@code`start`

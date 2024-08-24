@@ -51,7 +51,7 @@ class OptimusPirme(Transformer):
             if c[i] is not None:
                 input.append(c[i])
             i += 1
-        i += 1 # "|"
+        i += 1  # "|"
         while (i < len(c)):
             if c[i] is not None:
                 output.append(c[i])
@@ -64,7 +64,7 @@ class OptimusPirme(Transformer):
             if c[i] is not None:
                 input.append(c[i])
             i += 1
-        i += 1 # "|"
+        i += 1  # "|"
         while (i < len(c) - 1):
             if c[i] is not None:
                 output.append(c[i])
@@ -125,7 +125,7 @@ class OptimusPirme(Transformer):
         ut = c[1]
         ty = c[2]
         return Rt(name_id, ut, ty)
-    
+
     def b(self, c):
         id = None if "_" not in str(c[0]) else str(c[0][3:])
         return Breakpoint(id)

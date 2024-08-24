@@ -1,16 +1,17 @@
 # returns: translated rsp into "sp" (list of rsp into list of "sp")
 def translate_c(base_parser, c):
-    if isinstance(c, str): # rsp or "named" raw string
-            start_py_pos = c.find("`")
-            if start_py_pos == -1: # rsp -> sp
-                return base_parser.run("sp", c)
-            return base_parser.run(c[:start_py_pos], c[(start_py_pos + 1):]) # raw ntm -> ntm
+    if isinstance(c, str):  # rsp or "named" raw string
+        start_py_pos = c.find("`")
+        if start_py_pos == -1:  # rsp -> sp
+            return base_parser.run("sp", c)
+        # raw ntm -> ntm
+        return base_parser.run(c[:start_py_pos], c[(start_py_pos + 1):])
     if isinstance(c, list):
         return [translate_c(base_parser, el) for el in c]
     return c
 
 
-# returns: new c (copy) witch changed vars' names 
+# returns: new c (copy) witch changed vars' names
 def override_vars(c, unique_suf):
     if isinstance(c, dict):
         c_keys = override_vars(list(c.keys()), unique_suf)
@@ -39,10 +40,10 @@ class Var:
 
     def __str__(self):
         return f"@{self.ntm}_{self.id}"
-    
+
     def __repr__(self):
         return self.__str__()
-    
+
     def __eq__(self, another):
         return isinstance(another, Var) and self.ntm == another.ntm and self.id == another.id
 
@@ -198,7 +199,8 @@ class Ro:
 
     def __str__(self):
         return (
-            f"@semantics({self.name_id})" + "{\n" + f"{self.uo}\n---\n{self.tr}" + "\n}\n"
+            f"@semantics({self.name_id})" +
+            "{\n" + f"{self.uo}\n---\n{self.tr}" + "\n}\n"
         )
 
     def __repr__(self):
@@ -252,7 +254,7 @@ class Code:
 
     def __repr__(self):
         return self.__str__()
-    
+
     def translate(self, base_parser):
         self.rsp = translate_c(base_parser, self.rsp)
 
@@ -260,9 +262,9 @@ class Code:
 class Breakpoint:
     def __init__(self, id):
         self.id = id
-    
+
     def __str__(self):
         return "!B_" + str(id)
-    
+
     def __repr__(self):
         return self.__str__()

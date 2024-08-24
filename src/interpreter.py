@@ -33,11 +33,13 @@ class IState:
         self.reset_program_state = data["reset_program_state"]
         self.unit_nonterminal = data["unit_nonterminal"]
         self.unit_name = data["unit_name"]
-        self.program_state = [deepcopy(self.start_store), deepcopy(self.start_gamma)]
+        self.program_state = [
+            deepcopy(self.start_store), deepcopy(self.start_gamma)]
 
     def try_reset_program_state(self):
         if self.reset_program_state:
-            self.program_state = [deepcopy(self.start_store), deepcopy(self.start_gamma)]
+            self.program_state = [
+                deepcopy(self.start_store), deepcopy(self.start_gamma)]
 
 
 class Interpreter:
@@ -64,7 +66,7 @@ class Interpreter:
         # DEBUG
 
         if name in ["Ro", "Rt", "DefinePred", "Code"]:
-            p.translate(self.base_parser) # should be moved?
+            p.translate(self.base_parser)
 
         # DEBUG - print translated structure
         if name != "Block" and name != "Breakpoint":
@@ -103,12 +105,17 @@ class Interpreter:
             self.state.envs[-1].d_all[p.id] = p
 
         elif name == "Code":
-            self.c = p.rsp # sp, after transtlate
+            self.state.try_reset_program_state()
 
-            self.debugger.in_prove = True # DEBUG
-            self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on program from transition
+            self.c = p.rsp  # sp, after transtlate
 
-            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state, self.c, self.debugger, self.state.unit_nonterminal, self.state.unit_name)
+            self.debugger.in_prove = True  # -- DEBUG
+            # -- DEBUG - avoid influence of skip all / abort all on program from transition
+            self.debugger.incr_action_depth()
+            self.debugger.clear_steps_number()  # DEBUG
+
+            prover = Prover(self.base_parser, self.state.envs[-1], self.state.program_state,
+                            self.c, self.debugger, self.state.unit_nonterminal, self.state.unit_name)
 
             b = True
             # perform sos
@@ -117,28 +124,30 @@ class Interpreter:
                 if self.debugger.debug and self.debugger.data["follow"]["config"]:
                     self.debugger.try_reset()
                     if self.debugger.is_aborted():
-                        break # or maybe return?
-                    self.debugger.read_action({"s": prover.s, "c": prover.c}, "config")
+                        break
+                    self.debugger.read_action(
+                        {"s": prover.s, "c": prover.c}, "config")
                     if self.debugger.is_aborted():
-                        break # or maybe return?
+                        break
                 # DEBUG
-                    
-                self.debugger.incr_action_depth() # DEBUG
+
+                self.debugger.incr_action_depth()  # - DEBUG
 
                 # print(f"\nstate: {prover.s}, \nconstr: {prover.c}\n\n")
-                b = prover.try_perform_any_transition() # is performed transition
+                b = prover.try_perform_any_transition()  # is performed transition
 
-                self.debugger.decr_action_depth() # DEBUG
+                self.debugger.incr_steps_number()  # DEBUG
 
-            self.debugger.decr_action_depth() # DEBUG
-            self.debugger.in_prove = False # DEBUG
+                self.debugger.decr_action_depth()  # - DEBUG
 
-            if prover.c is not None: # final state
+            self.debugger.decr_action_depth()  # -- DEBUG
+            self.debugger.in_prove = False  # -- DEBUG
+
+            if prover.c is not None:  # final state
                 raise Exception("Stuck in sos")
-            
+
             self.state.program_state = prover.s
-            self.state.try_reset_program_state()
-        
+
         elif name == "Breakpoint":
             # DEBUG
             self.debugger.read_action("Breakpoint - id:" + p.id, "breakpoint")

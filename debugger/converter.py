@@ -2,11 +2,11 @@ from latex import build_pdf
 import os
 
 
-def tm(c): # brown
+def tm(c):  # brown
     return r'\tm{' + c + r'}'
 
 
-def tmb(c): # blue
+def tmb(c):  # blue
     return r'\tmb{' + c + r'}'
 
 
@@ -41,13 +41,13 @@ def tex(c):
             txt += tmb(", ")
             txt += tex(el)
         return tmb("[") + txt[8:] + tmb("]")
-    
-    elif name == "tuple": # (rule_name, c)
+
+    elif name == "tuple":  # (rule_name, c)
         for el in c:
             txt += tmb(", ")
             txt += tex(el)
         return tmb("(") + txt[8:] + tmb(")")
-    
+
     elif name == "dict":
         for el in c:
             txt += tmb(", ")
@@ -62,31 +62,31 @@ def tex(c):
         else:
             txt = ntm(c.ntm, c.id)
         return txt
-    
+
     elif name == "ApplyPred":
         return id(c.id) + tm("(") + tex(c.input) + tm("$|$") + tex(c.output) + tm(")")
 
     elif name == "DefinePred":
         return id(c.id) + tm("(") + tex(c.input) + tm("$|$") + tex(c.output) + tm(")") + tm("`") + r'\begin{python}' + c.code + r'\end{python}' + tm("`")
-    
+
     elif name == "Transition":
         if c.ending:
             return tm(r'$\langle$') + tex(c.c1) + tm(",") + tex(c.s1) + tm(r'$\rangle$') + r' $\to$ ' + tex(c.s2)
         return tm(r'$\langle$') + tex(c.c1) + tm(",") + tex(c.s1) + tm(r'$\rangle$') + r' $\to$ ' + tm(r'$\langle$') + tex(c.c2) + tm(",") + tex(c.s2) + tm(r'$\rangle$')
-    
+
     elif name == "Typing":
         return tex(c.g) + r' $\vdash$ ' + tex(c.c1) + tex(c.r) + tex(c.c2)
-    
+
     elif name == "Program":
         for p in c.lst:
             txt += r'~\\\\'
             txt += tex(p)
             txt += "\n"
         return txt[5:]
-    
+
     elif name == "Block":
         return r'\begin{quote}' + tm(r'\{ \\') + tex(c.p) + tm(r'\\ \}') + r'\end{quote}'
-    
+
     elif name == "Rs":
         for option in c.inneroptions:
             txt += r' $|$'
@@ -97,31 +97,31 @@ def tex(c):
                 else:
                     txt += tex(el)
         return id(c.name_id) + r':  ' + ntm(id(c.id)) + r' ::= ' + txt[5:] + r'\\'
-    
+
     elif name == "Ro":
         for el in c.uo:
             txt += r'\\'
             txt += tex(el)
         return r'\osr{' + id(c.name_id) + r'}' + \
-            r'{' + txt[2:] +  r'}{' + tex(c.tr) +  r'}\\'
+            r'{' + txt[2:] + r'}{' + tex(c.tr) + r'}\\'
 
     elif name == "Rt":
         for el in c.ut:
             txt += r'\\'
             txt += tex(el)
         return r'\osr{' + id(c.name_id) + r'}' + \
-            r'{' + txt[2:] +  r'}{' + tex(c.ty) +  r'}\\'
+            r'{' + txt[2:] + r'}{' + tex(c.ty) + r'}\\'
 
     elif name == "Code":
         return tex(c.rsp)
-    
+
     elif name == "Breakpoint":
         return r'\textcolor{red}{B-' + id(c.id) + r'}'
-    
+
     elif name == "int":
         return r'$' + str(c) + r'$'
 
-    else: # str
+    else:  # str
         if c is None:
             return "None"
         return id(c)
@@ -204,7 +204,7 @@ showstringspaces=false
 ''' + tex(c) + r'''
 \end{document}
 '''
-    
+
     dirname = os.getcwd()
     os.chdir(os.path.join(dirname, "tmp"))
 
