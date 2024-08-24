@@ -6,17 +6,17 @@ import yaml
 CONFIG_PATH = Path(__file__).parent / "debug_config.yaml"
 
 
-MAX_DEPTH = 500 # to counter infinite depth of proof
-MAX_STEPS = 500 # to counter infinite steps of code
+MAX_DEPTH = 500  # to counter infinite depth of proof
+MAX_STEPS = 500  # to counter infinite steps of code
 
 
-inf = 1000000 # can be swaped to "real" inf - bigger number
+inf = 1000000  # can be swaped to "real" inf - bigger number
 
 
 class Debugger:
     def __init__(self, stdscr=None, debug=False, data=None, path=CONFIG_PATH):
 
-        self.depth = 0 # actual depth of action, even for empty debug
+        self.depth = 0  # actual depth of action, even for empty debug
 
         # global action -> action_depth = -1
         # action_all -> action_depth = depth - 1
@@ -28,16 +28,16 @@ class Debugger:
         # before new action there will be reset that restore inf
         # value if its depth <= stored action like skip / abort
 
-        self.steps = 0 # actual number of operational semantics step
-                       # even for empty debug
+        self.steps = 0  # actual number of operational semantics step
+        # even for empty debug
 
         self.skip = inf
-        self.abort = inf 
+        self.abort = inf
 
         if not debug:
             self.debug = False
-            return # empty debug
-        
+            return  # empty debug
+
         self.debug = True
         self.stdscr = stdscr
         self.stdscr.scrollok(1)
@@ -58,9 +58,12 @@ class Debugger:
             self.stdscr.clear()
 
         self.stdscr.addstr("\n")
-        self.stdscr.addstr(f"--------------------------------------------------------------------------------\n")
-        self.stdscr.addstr(f"                            DEBUG - {type(c).__name__} - depth({self.depth})\n")
-        self.stdscr.addstr(f"--------------------------------------------------------------------------------\n\n")
+        self.stdscr.addstr(
+            f"--------------------------------------------------------------------------------\n")
+        self.stdscr.addstr(
+            f"                            DEBUG - {type(c).__name__} - depth({self.depth})\n")
+        self.stdscr.addstr(
+            f"--------------------------------------------------------------------------------\n\n")
         self.stdscr.addstr(str(c))
         self.stdscr.refresh()
 
@@ -76,16 +79,16 @@ class Debugger:
         if self.steps == MAX_STEPS:
             raise Exception("Max steps exceed")
         self.steps += 1
-    
+
     def clear_steps_number(self):
         self.steps = 0
 
     def is_skipped(self):
         return self.depth >= self.skip
-    
+
     def is_aborted(self):
         return self.depth >= self.abort
-    
+
     def try_reset(self):
         if self.depth <= self.skip:
             self.skip = inf
@@ -95,7 +98,7 @@ class Debugger:
     def read_action(self, c, place):
         if (not self.debug) or (not self.data["follow"][place]) or self.is_skipped() or self.is_aborted():
             return
-        
+
         self.add_window_info(c)
         depth = self.depth
 
@@ -103,7 +106,7 @@ class Debugger:
             gen_tex(c)
 
         read = False
-        while(not read):
+        while (not read):
             key = self.stdscr.getch()
 
             if key == self.data["keys"]["refresh"]:
@@ -117,7 +120,7 @@ class Debugger:
             elif key == self.data["keys"]["global_abort"]:
                 self.abort, read = -1, True
 
-            elif self.in_prove: # transition, typing
+            elif self.in_prove:  # transition, typing
                 if key == self.data["keys"]["prove_next"]:
                     read = True
                 elif key == self.data["keys"]["prove_skip"]:
@@ -129,7 +132,7 @@ class Debugger:
                 elif key == self.data["keys"]["prove_abort_all"]:
                     self.abort, read = depth - 1, True
 
-            else: # program (block), breakpoints, call
+            else:  # program (block), breakpoints, call
                 if key == self.data["keys"]["next"]:
                     read = True
                 elif key == self.data["keys"]["skip"]:

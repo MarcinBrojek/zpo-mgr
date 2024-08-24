@@ -31,8 +31,10 @@ class BaseParser:
             known_ntm = []
             for rs in self.rs_all:
                 if rs.id not in known_ntm:
-                    grammar_txt += f"{rs.id}: var{rs.id}\n" # name var{rs.id} should be unique
-                    grammar_txt += f'var{rs.id}: "@" ' + r"/" + rs.id + r"/" + r" [/_\w+/]" + "\n"
+                    # name var{rs.id} should be unique
+                    grammar_txt += f"{rs.id}: var{rs.id}\n"
+                    grammar_txt += f'var{rs.id}: "@" ' + \
+                        r"/" + rs.id + r"/" + r" [/_\w+/]" + "\n"
                     known_ntm.append(rs.id)
 
                 rule_txt = ""
@@ -40,25 +42,31 @@ class BaseParser:
                     rule_txt += "| "
                     for el in option:
                         rule_txt += el + " "
-                grammar_txt += f"%extend {rs.id}.{rs.number or 0} : " + rule_txt[2:] + "\n"
+                grammar_txt += f"%extend {rs.id}.{rs.number or 0} : " + \
+                    rule_txt[2:] + "\n"
 
             tranformer_txt = self.base_tranformer_txt
             for ntm in known_ntm:
-                tranformer_txt += f"\n    def {ntm}(self, c):\n" + f"        return (\"{ntm}\", Var(c[0].ntm, c[0].id) if (len(c) == 1) and isinstance(c[0], Var) and (c[0].to_correct == 1) else [el if not isinstance(el, Token) else el.value for el in c])\n"
-                tranformer_txt += f"\n    def var{ntm}(self, c):\n" + f"        return Var(str(c[0]), (c[1] or \"\")[1:], 1)\n" # c[1] can be None (id)
+                tranformer_txt += f"\n    def {ntm}(self, c):\n" + \
+                    f"        return (\"{ntm}\", Var(c[0].ntm, c[0].id) if (len(c) == 1) and isinstance(c[0], Var) and (c[0].to_correct == 1) else [el if not isinstance(el, Token) else el.value for el in c])\n"
+                # c[1] can be None (id)
+                tranformer_txt += f"\n    def var{ntm}(self, c):\n" + \
+                    f"        return Var(str(c[0]), (c[1] or \"\")[1:], 1)\n"
 
             with open("tmp/tmp_transformer.py", "w") as tmp_transformer_import:
                 tmp_transformer_import.write(tranformer_txt)
 
             self.grammar_txt = grammar_txt
-            self.parser = Lark(grammar=grammar_txt, start=start, parser="earley")
+            self.parser = Lark(grammar=grammar_txt,
+                               start=start, parser="earley")
 
         elif self.start != start:
-            self.parser = Lark(grammar=self.grammar_txt, start=start, parser="earley")
+            self.parser = Lark(grammar=self.grammar_txt,
+                               start=start, parser="earley")
 
         self.need_update = False
         self.start = start
-        
+
         tree = self.parser.parse(input_txt)
         transformer = importlib.import_module("tmp.tmp_transformer")
         importlib.reload(transformer)

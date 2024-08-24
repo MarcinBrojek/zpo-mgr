@@ -29,7 +29,7 @@ def try_update_constr(c, m):
 
 # c1 - full known, c2 - with vars
 # returns: success?, maping for vars in c2
-def try_unify_constrs(c1, c2): 
+def try_unify_constrs(c1, c2):
     m = dict()
     # print(c1, type(c1), "<=>", c2, type(c2))
     if isinstance(c1, list) and isinstance(c2, list):
@@ -46,7 +46,7 @@ def try_unify_constrs(c1, c2):
                 return False, None
             m_or = m_or | m_e
         return True, m_or
-    if isinstance(c1, dict) and isinstance (c2, dict):
+    if isinstance(c1, dict) and isinstance(c2, dict):
         b1, m1 = try_unify_constrs(list(c1.keys()), list(c2.keys()))
         b2, m2 = try_unify_constrs(list(c1.values()), list(c2.values()))
         return (True, (m1 | m2)) if b1 and b2 and ((m1 | m2) == (m2 | m1)) else (False, None)
@@ -68,7 +68,8 @@ class Prover:
 
     def __init__(self, parser, env, program_state, c, debugger, unit_nonterminal, unit_name):
         self.d_all, self.rt_all, self.ro_all = env.d_all, env.rt_all, env.ro_all
-        self.unit = parser.run(unit_nonterminal, unit_name) # normally it is "sp" and "unit"
+        # normally it is "sp" and "unit"
+        self.unit = parser.run(unit_nonterminal, unit_name)
         self.s = program_state
         self.c = c
         self.debugger = debugger
@@ -76,11 +77,12 @@ class Prover:
     def try_perform_any_transition(self):
         if self.c is None:
             return False
-        
-        tr = Transition(self.s, Var("s", 2), self.c, Var("c", 2)).override_vars(0)
+
+        tr = Transition(self.s, Var("s", 2), self.c,
+                        Var("c", 2)).override_vars(0)
         res = self.try_prove_transition([tr], dict(), 1)
         if res:
-            self.s, self.c = res # s2, c2
+            self.s, self.c = res  # s2, c2
             return True
         return False
 
@@ -135,7 +137,7 @@ class Prover:
 
     # tys - list of ty/ap to "prove", m - temporal maping, unique_suf - unique change of var names in rules
     # returns: last c2 from typing, so should be `unit` in try_prove_transition
-    def try_prove_typing(self, tys, m, unique_suf=0): # expected: tys not empty
+    def try_prove_typing(self, tys, m, unique_suf=0):  # expected: tys not empty
         unique_suf += 1
         my_tys = tys.copy()
         current = my_tys.pop()
@@ -155,12 +157,12 @@ class Prover:
             if not b:
                 return False
             return self.try_prove_typing(my_tys, new_m, unique_suf)
-        
-        if isinstance(current, tuple): # (c2-unify, c2-known)
+
+        if isinstance(current, tuple):  # (c2-unify, c2-known)
             b, c2 = try_update_constr(current[1], m)
             if not b:
                 return False
-            
+
             b, m_tu = try_unify_constrs(c2, current[0])
             if (not b) or ((m_tu | m) != (m | m_tu)):
                 return False
@@ -179,13 +181,14 @@ class Prover:
         b, current_l = try_update_constr([current.g, current.c1, current.r], m)
         if not b:
             return False
-        
-        b1, current_l1 = try_update_constr([current.g, current.c1, current.r, current.c2], m)
-        
+
+        b1, current_l1 = try_update_constr(
+            [current.g, current.c1, current.r, current.c2], m)
+
         # DEBUG - depth - tmp save
         debug_tmp_depth = self.debugger.depth
         # DEBUG
-        
+
         # 1. iterate through all rt rules to find matching
         for rt_id in self.rt_all:
             # 1a. set new vars in maybe matching rule
@@ -206,7 +209,8 @@ class Prover:
             self.debugger.depth = debug_tmp_depth
             self.debugger.incr_action_depth()
             # DEBUG
-            last_c2 = self.try_prove_typing(my_tys + [(current.c2, ty.c2)] + ut[::-1], m | m_ty, unique_suf)
+            last_c2 = self.try_prove_typing(
+                my_tys + [(current.c2, ty.c2)] + ut[::-1], m | m_ty, unique_suf)
             if last_c2:
 
                 # DEBUG
@@ -219,23 +223,25 @@ class Prover:
         self.debugger.depth = debug_tmp_depth
         # DEBUG
 
-        return False            
+        return False
 
     # helper wrapper to call try_prove_typing
     # s - given program state, c - given construction to check is well typed, unique_suf - unique change of var names in rules
     # return: is c is well typed in s?
     def try_typing(self, s, c, unique_suf=0):
-        self.debugger.incr_action_depth() # DEBUG - avoid influence of skip all / abort all on transiotion from typing
+        # DEBUG - avoid influence of skip all / abort all on transiotion from typing
+        self.debugger.incr_action_depth()
 
-        b = self.try_prove_typing([Typing(s[0], c, ":", self.unit)], dict(), unique_suf)
+        b = self.try_prove_typing(
+            [Typing(s[0], c, ":", self.unit)], dict(), unique_suf)
 
-        self.debugger.decr_action_depth() # DEBUG
+        self.debugger.decr_action_depth()  # DEBUG
 
         return b
 
     # trs - list of tuple/tr/ap to "prove", m - maping, unique_suf - unique change of var names in rules
     # returns: last (s2, c2) from single small step
-    def try_prove_transition(self, trs, m, unique_suf=0): # expected: trs not empty
+    def try_prove_transition(self, trs, m, unique_suf=0):  # expected: trs not empty
         unique_suf += 1
         my_trs = trs.copy()
         current = my_trs.pop()
@@ -255,20 +261,20 @@ class Prover:
             if not b:
                 return False
             return self.try_prove_transition(my_trs, new_m, unique_suf)
-        
-        if isinstance(current, tuple): # (s2-unify, c2-unify, s2-known, c2-known)
+
+        if isinstance(current, tuple):  # (s2-unify, c2-unify, s2-known, c2-known)
             b, [s2, c2] = try_update_constr([current[2], current[3]], m)
             if not b:
                 return False
-            
+
             b, m_tu = try_unify_constrs([s2, c2], [current[0], current[1]])
             if (not b) or ((m_tu | m) != (m | m_tu)):
                 return False
-            
+
             # check if used constr in prove is well typed (not in final state)
             if (c2 is not None) and (not self.try_typing(s2, c2, unique_suf)):
                 return False
-            
+
             # DEBUG - success on transition
             self.debugger.decr_action_depth()
             # DEBUG
@@ -285,7 +291,8 @@ class Prover:
         if not b:
             return False
 
-        b1, current_l1 = try_update_constr([current.s1, current.c1, current.s2, current.c2], m)
+        b1, current_l1 = try_update_constr(
+            [current.s1, current.c1, current.s2, current.c2], m)
 
         # type check for starting construction
         if (current_l[1] is not None) and (not self.try_typing(current_l[0], current_l[1], unique_suf)):
@@ -313,8 +320,9 @@ class Prover:
             self.debugger.depth = debug_tmp_depth
             self.debugger.incr_action_depth()
             # DEBUG
-            
-            last_s2c2 = self.try_prove_transition(my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)
+
+            last_s2c2 = self.try_prove_transition(
+                my_trs + [(current.s2, current.c2, tr.s2, tr.c2)] + uo[::-1], m | m_tr, unique_suf)
             if last_s2c2:
 
                 # DEBUG
@@ -322,7 +330,7 @@ class Prover:
                 # DEBUG
 
                 return last_s2c2
-        
+
         # DEBUG
         self.debugger.action_depth = debug_tmp_depth
         # DEBUG
